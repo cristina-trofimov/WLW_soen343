@@ -10,8 +10,8 @@ If your `pip` command is not working try `python -m pip install`
 
 There are two main directories in the project, `backend` and `frontend`. They are both places in the `\root` directory of the project.
 
-The first two steps are for activating the venv for a clean environment. <br>
-These steps should be done in the `\root` directory of the project to ensure an isolated environment for the whole project.
+⚠️The first two steps are for activating the venv for a clean environment. <br>
+⚠️These steps should be done in the `\root` directory of the project to ensure an isolated environment for the whole project.
 
 1. Create a virtual environment : 
 ```
