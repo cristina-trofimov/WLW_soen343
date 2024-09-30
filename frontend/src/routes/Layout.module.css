@@ -7,7 +7,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.layout-container {
+.layoutContainer {
     display: flex;
     flex-direction: column;
     max-block-size: 100vh;
@@ -26,48 +26,33 @@ body {
     justify-content: space-between;
     padding: 0 20px;
     z-index: 1000;
-    /* Ensure header is above other content */
 }
 
 .logo {
     font-size: 1.5rem;
 }
 
-.login-button {
+.loginButton {
     background-color: #d4a373;
-    /* Green background */
     border: none;
-    /* Remove border */
     color: white;
-    /* White text */
     padding: 10px 20px;
-    /* Padding around the text */
     text-align: center;
-    /* Center the text */
     text-decoration: none;
-    /* Remove underline from links */
     display: inline-block;
-    /* Allow width and height */
     font-size: 16px;
-    /* Font size */
     margin-left: auto;
-    /* Push to the right */
     cursor: pointer;
-    /* Pointer cursor on hover */
     border-radius: 4px;
 
-    /* Rounded corners */
     &:hover {
         background-color: #d8b38e;
-        /* Darker green background */
     }
 }
 
-.main-content {
+.mainContent {
     margin-top: 80px;
-    /* Space for the fixed header */
     padding: 20px;
-    /* Padding for main content */
     height: calc(100vh - 80px);
     background-color: #f2efeb;
 

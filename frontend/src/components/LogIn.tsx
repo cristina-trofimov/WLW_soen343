@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axiosClient from "../axiosClient"
 import { useNavigate } from 'react-router-dom';
-import { Axios, AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { Button, Fieldset, Input, PasswordInput, TextInput } from "@mantine/core";
 
 
 function LogIn() {
@@ -29,16 +30,12 @@ function LogIn() {
     return (
         <div>
             <form>
-                <div>
-                    <label>Email:</label>
-                    <input
-                        type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <button type="button" onClick={() => logInCustomer()}>Continue</button>
+                <Fieldset legend="Login">
+                    <TextInput label="Email" placeholder="example@domain.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <PasswordInput label="Password" placeholder="password123!" mt="md" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </Fieldset>
+                
+                <Button type="button" onClick={() => logInCustomer()} variant="light">Continue</Button>
             </form>
 
         </div>

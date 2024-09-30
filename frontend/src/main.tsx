@@ -1,4 +1,6 @@
 import './index.css'
+import '@mantine/core/styles.css';
+import { createTheme, MantineProvider } from '@mantine/core'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
@@ -35,8 +37,30 @@ const router = createBrowserRouter([
 
 ])
 
+const theme = createTheme({
+  colors: {
+    'wlw-green': [
+      '#ccd5ae',
+      '#b8c09d',
+      '#a3aa8b',
+      '#8f957a',
+      '#7a8068',
+      '#666b57',
+      '#525546',
+      '#3d4034',
+      '#292b23',
+      '#141511',
+    ],
+  },
+  primaryColor: 'wlw-green',
+  primaryShade: 1,
+});
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <MantineProvider theme={theme}>
+      <RouterProvider router={router} />
+    </MantineProvider>
+
   </StrictMode>,
 )

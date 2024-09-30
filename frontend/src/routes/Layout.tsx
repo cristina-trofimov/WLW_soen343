@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import './Layout.css';
+import classes from './Layout.module.css';
 import { useNavigate } from 'react-router-dom';
 
 const Layout = () => {
@@ -7,12 +7,12 @@ const Layout = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="layout-container">
-            <header className="header">
-                <div className="logo">MyApp</div>
-                <button className="login-button" onClick={() => navigate("/login")} >Log In</button>
+        <div className={classes.layoutContainer}>
+            <header className={classes.header}>
+                <div className={classes.logo}>MyApp</div>
+                <button className={classes.loginButton} onClick={() => navigate("/login")} >Log In</button>
             </header>
-            <main className="main-content"><Outlet /></main>
+            <main className={classes.mainContent}><Outlet /></main>
         </div>
     )
 };

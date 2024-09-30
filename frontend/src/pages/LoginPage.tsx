@@ -1,17 +1,31 @@
 import { useState } from "react"
-import LogIn from "../components/LogIn"
-import Register from "../components/Register"
+import { Tabs } from "@mantine/core"
+import LogIn from "../components/LogIn";
+import Register from "../components/Register";
 
 
 const LoginPage = () => {
-    const [choice, setChoice] = useState('login')
+    const [activeTab, setActiveTab] = useState<string | null>("login");
     return (
-        <div>
+        <div >
             <div>Welcome to WLW</div>
-            <button onClick={() => setChoice("login")}>Log In</button>
-            <button onClick={() => setChoice("register")}>Register</button>
 
-            {(choice === "login") ? <LogIn /> : <Register />}
+            <Tabs variant="outline" defaultValue={activeTab} onChange={(value) => setActiveTab(value)}>
+                <Tabs.List  >
+                    <Tabs.Tab value="login" >
+                        Login
+                    </Tabs.Tab>
+                    <Tabs.Tab value="register" >
+                        Register
+                    </Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panel value="login">
+                    <LogIn />
+                </Tabs.Panel>
+                <Tabs.Panel value="register">
+                    <Register />
+                </Tabs.Panel>
+            </Tabs>
         </div>
     )
 }
