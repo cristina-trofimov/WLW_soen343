@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axiosClient from "../axiosClient"
 import { useNavigate } from 'react-router-dom';
+import { Axios, AxiosError } from "axios";
 
 
 function LogIn() {
@@ -14,10 +15,14 @@ function LogIn() {
         console.log(email)
         console.log(password)
 
-        const response = await axiosClient.post('/login', { email, password })
+        try {
+            await axiosClient.post('/login', { email, password })
 
-        if (response.status === 200) {
             navigate("/home")
+        } catch (error) {
+            if ((error as AxiosError).response?.status === 401) {
+                alert("Invalid email or password")
+            }
         }
     }
 

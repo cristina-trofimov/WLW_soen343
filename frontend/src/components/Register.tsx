@@ -10,9 +10,11 @@ function Register() {
     console.log(email)
     console.log(password)
 
-    const response = await axiosClient.post('http://127.0.0.1:5000/register', { email, password })
+    const response = await axiosClient.post('/register', { email, password })
 
-    console.log(response)
+    if(response.status === 201) {
+      alert("Registered successfully")
+    }
   }
 
   return (
