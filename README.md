@@ -10,8 +10,8 @@ If your `pip` command is not working try `python -m pip install`
 
 There are two main directories in the project, `backend` and `frontend`. They are both places in the `\root` directory of the project.
 
-The first two steps are for activating the venv for a clean environment. <br>
-These steps should be done in the `\root` directory of the project to ensure an isolated environment for the whole project.
+⚠️The first two steps are for activating the venv for a clean environment. <br>
+⚠️These steps should be done in the `\root` directory of the project to ensure an isolated environment for the whole project.
 
 1. Create a virtual environment : 
 ```
@@ -22,24 +22,49 @@ python -m venv venv
 venv\Scripts\activate
 ```
 4. Navigate to the backend directory : 
-```cd backend
 ```
-5. Command to run the installation of the necessary python modules : `pip install -r requirements.txt`
-6. Navigate to the [Redux instalation](https://github.com/MicrosoftArchive/) github repo and download the the Redis application corresponding to your OS. Make sure to add the Redis directory to your PATH environment variable. The port for the Redis server is set to `6379`. If it is different for you, please set it to the correct port when installing the Redis server.
+cd backend
+```
+5. Command to run the installation of the necessary python modules : 
+```
+pip install -r requirements.txt
+```
+6. Navigate to the [Redux instalation](https://github.com/MicrosoftArchive/) github repo and download the the Redis application corresponding to your OS. Make sure to add the Redux directory to your PATH environment variable during installation. <i>The port for the Redux server is set to `6379`</i>. If it is different for you, please set it to the correct port when installing the Redis server.
 7. To verify that the Redis server is running, open a new terminal and run the command `redis-cli`. If the server is running, you should see command input with the host and the corresponding port. If there are any issues, it is most likely that your environment variables are not set correctly.
 8. To verify that the Redis server is responsive write `PING` and press enter. If the server is running correctly, you should see `PONG` as a response.
-9. To exit the Redis server, write `exit` and press enter.
-7. To run the backend : `python app.py`
+9. To exit the Redis server, write 
+```
+exit
+``` 
+7. To run the backend : 
+```
+python app.py
+```
 
 ### Frontend
 
-1. Navigate to the frontend directory : `cd frontend`
-2. Run `npm install`
-3. Install necessary packages : 
-    - `npm install react-router-dom` 
-    - `npm install --save-dev @types/react-router-dom`
-    - `npm install axios`
-3. To run the frontend : `npm run dev`
+1. Navigate to the frontend directory : 
+```
+cd frontend
+```
+3. Run 
+```
+npm install
+```
+5. Install necessary packages : 
+```
+npm install react-router-dom
+```
+```
+npm install --save-dev @types/react-router-dom
+```
+```
+npm install axios
+```
+3. To run the frontend : 
+```
+npm run dev
+```
 
 
 ## Code Organization
