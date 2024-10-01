@@ -7,7 +7,7 @@ import Register from "../components/Register";
 const LoginPage = () => {
     const [activeTab, setActiveTab] = useState<string | null>("login");
     return (
-        <div >
+        <div className="">
             <div>Welcome to WLW</div>
 
             <Tabs variant="outline" defaultValue={activeTab} onChange={(value) => setActiveTab(value)}>

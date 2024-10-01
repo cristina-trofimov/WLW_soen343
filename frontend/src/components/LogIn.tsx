@@ -2,7 +2,7 @@ import { useState } from "react";
 import axiosClient from "../axiosClient"
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from "axios";
-import { Button, Fieldset, Input, PasswordInput, TextInput } from "@mantine/core";
+import { Button, Fieldset, PasswordInput, TextInput } from "@mantine/core";
 
 
 function LogIn() {

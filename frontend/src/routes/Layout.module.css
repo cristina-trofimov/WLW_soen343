@@ -5,16 +5,17 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    min-height: 100vh;
 }
 
 .layoutContainer {
     display: flex;
     flex-direction: column;
-    max-block-size: 100vh;
+    min-height: 100vh;
 }
 
 .header {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
@@ -26,10 +27,12 @@ body {
     justify-content: space-between;
     padding: 0 20px;
     z-index: 1000;
+
 }
 
 .logo {
     font-size: 1.5rem;
+    height: 100%;
 }
 
 .loginButton {
@@ -51,9 +54,8 @@ body {
 }
 
 .mainContent {
-    margin-top: 80px;
     padding: 20px;
-    height: calc(100vh - 80px);
     background-color: #f2efeb;
+    flex-grow: 1;
 
 }
