@@ -10,5 +10,5 @@ def get_uuid():
 class Customer(db.Model):
     __tablename__ = 'customers'
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    email = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100), nullable=False)
