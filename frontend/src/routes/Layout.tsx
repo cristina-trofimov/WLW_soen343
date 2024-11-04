@@ -10,10 +10,15 @@ const Layout = () => {
     return (
         <div className={classes.layoutContainer}>
             <div className={classes.header}>
-                <a onClick={() => navigate("/home")}><div className={classes.logo}><Image src={"./public/WLW_logo.png"} h={"80px"} /></div></a>
-                <button className={classes.loginButton} onClick={() => navigate("/login")} >Log In</button>
+                <a onClick={() => navigate("/home")}>
+                    <div className={classes.logo}><Image src={"./public/WLW_logo.png"} h={"80px"}/></div>
+                </a>
+                <button className={classes.headerButton} onClick={() => navigate("/")}>SHIPPING</button>
+                <button className={classes.headerButton} onClick={() => navigate("/")}>BUSINESS SERVICE</button>
+                <button className={classes.headerButton} onClick={() => navigate("/")}>TRACKING</button>
+                <button className={classes.loginButton} onClick={() => navigate("/login")}>Log In</button>
             </div>
-            <main className={classes.mainContent}><Outlet /></main>
+            <main className={classes.mainContent}><Outlet/></main>
         </div>
     )
 };

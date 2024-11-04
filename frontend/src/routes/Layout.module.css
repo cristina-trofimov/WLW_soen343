@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Alta, serif;
     min-height: 100vh;
     overflow: hidden;
 }
@@ -52,6 +52,17 @@ body {
     &:hover {
         background-color: #d8b38e;
     }
+}
+.headerButton{
+    background-color: #CCD5AE;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin-left: auto;
+    cursor: pointer;
+
 }
 
 .mainContent {
