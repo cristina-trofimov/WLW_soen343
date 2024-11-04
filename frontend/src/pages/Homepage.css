@@ -1,0 +1,35 @@
+#trackingPackage {
+  flex-direction: column;
+  justify-content: center;
+    font-family: Alta, serif;
+    font-size: 33px;
+    padding-left: 40px;
+}
+
+#searchButton{
+    background-color: #d4a373;
+    height: 60px;
+    width: 60px;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 50%;
+    margin-left: 40px;
+}
+#searchImage{
+    padding-top:8px;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Creates two equal columns */
+  gap: 50px;
+    height:60vh;
+}
+
+.column {
+  padding: 5px;
+      box-sizing: border-box;
+}
