@@ -17,9 +17,17 @@ There are two main directories in the project, `backend` and `frontend`. They ar
 ```
 python -m venv venv
 ```
+or
+```
+python3 -m venv venv
+```
 2. Activate the virtual environment : 
 ```
 venv\Scripts\activate
+```
+or
+```
+source venv/bin/activate
 ```
 3. Navigate to the backend directory : 
 ```
