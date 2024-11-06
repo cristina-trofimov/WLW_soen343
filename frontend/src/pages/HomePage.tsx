@@ -5,7 +5,7 @@ const HomePage = () => {
             <div id={"trackingPackage"}>
                 <div className={"grid-container"}>
                     <div className={"column"} id={"column-left"}>
-                        <p id={"importantInfo"}>TRACK YOUR PACKAGE</p>
+                        <p id={"title"}>TRACK YOUR PACKAGE</p>
                         <div id={"searchArea"}>
                             <input placeholder={"Enter Tracking Number"}/>
                             <button id={"searchButton"}>

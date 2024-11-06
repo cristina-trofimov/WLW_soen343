@@ -1,5 +1,5 @@
 import './QuotationPage.css';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 
 // Define the type for a suggestion object
@@ -14,53 +14,109 @@ const QuotationPage = () => {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [shippingCoords, setShippingCoords] = useState<[number, number] | null>(null);
   const [deliveryCoords, setDeliveryCoords] = useState<[number, number] | null>(null);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [shippingSuggestions, setShippingSuggestions] = useState<Suggestion[]>([]);
+  const [deliverySuggestions, setDeliverySuggestions] = useState<Suggestion[]>([]);
   const [distance, setDistance] = useState<string | null>(null);
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [width, setWidth] = useState('');
+  const [length, setLength] = useState('');
+  const [shippingPrices, setShippingPrices] = useState({
+    regular: 0,
+    express: 0,
+    eco: 0
+  });
+   const [deliveryDate, setDeliveryDate] = useState({
+    regular: "",
+    express: "",
+    eco: ""
+  });
 
-  useEffect(() => {
-    console.log("Shipping Coordinates:", shippingCoords);
-  }, [shippingCoords]);
-
-  useEffect(() => {
-    console.log("Delivery Coordinates:", deliveryCoords);
-  }, [deliveryCoords]);
-
-  // Fetch address suggestions and update coordinates
+  // Handle address input change
   const handleAddressChange = async (
     e: ChangeEvent<HTMLInputElement>,
     setAddress: React.Dispatch<React.SetStateAction<string>>,
-    setCoords: React.Dispatch<React.SetStateAction<[number, number] | null>>
+    setCoords: React.Dispatch<React.SetStateAction<[number, number] | null>>,
+    setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>
   ) => {
     const query = e.target.value;
     setAddress(query);
 
     if (query.length > 2) {
       try {
-        const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=ca`);
+        const response = await axios.get(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=ca`
+        );
         setSuggestions(response.data);
-
-        // Optional: clear coordinates when a new search starts
-        setCoords(null);
+        setCoords(null);  // Clear previous coordinates
       } catch (error) {
-        console.error("Error fetching address suggestions:", error);
+        console.error('Error fetching address suggestions:', error);
       }
     } else {
       setSuggestions([]);
     }
   };
 
-  // Handle selection of an address suggestion
+  // Handle suggestion selection
   const handleSelectSuggestion = (
     suggestion: Suggestion,
     setAddress: React.Dispatch<React.SetStateAction<string>>,
-    setCoords: React.Dispatch<React.SetStateAction<[number, number] | null>>
+    setCoords: React.Dispatch<React.SetStateAction<[number, number] | null>>,
+    setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>
   ) => {
     setAddress(suggestion.display_name);
     setCoords([parseFloat(suggestion.lat), parseFloat(suggestion.lon)]);
     setSuggestions([]);
   };
 
-  // Calculate the distance between two coordinates using XMLHttpRequest
+  // Function to calculate the shipping prices
+  const calculateShippingPrices = (distance: number) => {
+    if (!weight || !height || !width || !length) {
+      alert('Please fill all package dimensions (weight, height, width, length)');
+      return;
+    }
+
+    const packageWeight = parseFloat(weight);
+    const packageHeight = parseFloat(height);
+    const packageWidth = parseFloat(width);
+    const packageLength = parseFloat(length);
+
+    // Basic calculation for volume and weight-based price (just a sample formula)
+    const volume = packageHeight * packageWidth * packageLength; // Volume in cubic units
+    const basePrice = volume * 0.10 + packageWeight * 0.25+5+0.90*distance; // Example formula for price calculation
+
+    // Calculate prices based on the shipping methods
+    const regularPrice = basePrice;
+    const expressPrice = regularPrice * 1.2; // Express shipping is 20% more expensive
+    const ecoPrice = regularPrice * 0.8; // Eco shipping is 20% cheaper
+
+    // Update the state with the prices
+    setShippingPrices({
+      regular: parseFloat(regularPrice.toFixed(2)),
+      express: parseFloat(expressPrice.toFixed(2)),
+      eco: parseFloat(ecoPrice.toFixed(2))
+    });
+  };
+ // const handleBlur = (setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>) => {
+ //   setSuggestions([]);  // Hide suggestions when the input loses focus
+  //};
+    const calculateDeliveryDate = (daysToAdd: number): string => {
+    const today = new Date();
+    today.setDate(today.getDate() + daysToAdd);
+    return today.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+const updateDeliveryDates = () => {
+    setDeliveryDate({
+      regular: calculateDeliveryDate(5),   // Regular: 5 days from today
+      express: calculateDeliveryDate(2),   // Express: 2 days from today
+      eco: calculateDeliveryDate(8)        // Eco: 8 days from today
+    });
+  };
+  // Calculate the distance using OpenRouteService API
   const calculateDistance = () => {
     if (shippingCoords && deliveryCoords) {
       const apiKey = '5b3ce3597851110001cf6248f835839e4a72421881fa97ad83367c9d'; // Your OpenRouteService API Key
@@ -69,56 +125,36 @@ const QuotationPage = () => {
       // Create a new XMLHttpRequest
       const request = new XMLHttpRequest();
 
-      // Open the request with POST method and the OpenRouteService API URL
       request.open('POST', url);
-
-      // Set necessary headers
       request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
       request.setRequestHeader('Content-Type', 'application/json');
-      request.setRequestHeader('Authorization', apiKey); // Replace with your actual API key
+      request.setRequestHeader('Authorization', apiKey);
 
-      // Handle the response
       request.onreadystatechange = function () {
-        if (this.readyState === 4) { // When request completes
-          if (this.status === 200) { // If request was successful
-            console.log('Status:', this.status);
-            console.log('Headers:', this.getAllResponseHeaders());
-            console.log('Body:', this.responseText);
-
-            // Parsing the response to extract distance
-            try {
-              const responseData = JSON.parse(this.responseText);
-              // Assuming the first feature contains the distance
-              const distanceInMeters = responseData.features[0].properties.segments[0].distance;
-              console.log(`Distance: ${(distanceInMeters / 1000).toFixed(2)} km`); // Convert to kilometers and log
-
-              // You can return the distance here, or update the UI
-              const distanceInKm = (distanceInMeters / 1000).toFixed(2);
-              setDistance(distanceInKm + " km");
-            } catch (error) {
-              console.error('Error parsing response:', error);
-              setDistance("Error calculating distance");
-            }
+        if (this.readyState === 4) {
+          if (this.status === 200) {
+            const responseData = JSON.parse(this.responseText);
+            const distanceInMeters = responseData.features[0].properties.segments[0].distance;
+            const distanceInKm = (distanceInMeters / 1000).toFixed(2);
+            setDistance(distanceInKm + ' km');
+            calculateShippingPrices(parseFloat(distanceInKm));
+            updateDeliveryDates();
           } else {
-            console.error('Error with the request:', this.status);
-            setDistance("Error calculating distance");
+            setDistance('Error calculating distance');
           }
         }
       };
 
-      // Define the body with coordinates from the parameters
       const body = `{
         "coordinates": [
           [${shippingCoords[1]}, ${shippingCoords[0]}],
           [${deliveryCoords[1]}, ${deliveryCoords[0]}]
         ]
       }`;
-      console.log(body);
-      // Send the request with the coordinates as the body
+
       request.send(body);
     } else {
-      console.warn("Shipping or Delivery coordinates are missing:", shippingCoords, deliveryCoords);
-      setDistance("Invalid coordinates");
+      setDistance('Invalid coordinates');
     }
   };
 
@@ -130,15 +166,20 @@ const QuotationPage = () => {
         <input
           type="text"
           value={shippingAddress}
-          onChange={(e) => handleAddressChange(e, setShippingAddress, setShippingCoords)}
+          onChange={(e) =>
+            handleAddressChange(e, setShippingAddress, setShippingCoords, setShippingSuggestions)
+          }
+         // onBlur={() => handleBlur(setShippingSuggestions)}
           placeholder="Shipping address"
         /><br />
-        {suggestions.length > 0 && (
+        {shippingSuggestions.length > 0 && (
           <div className="suggestion-container">
-            {suggestions.map((suggestion, index) => (
+            {shippingSuggestions.map((suggestion, index) => (
               <div
                 key={index}
-                onClick={() => handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords)}
+                onClick={() =>
+                  handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords, setShippingSuggestions)
+                }
                 className="suggestion-item"
               >
                 {suggestion.display_name}
@@ -151,15 +192,20 @@ const QuotationPage = () => {
         <input
           type="text"
           value={deliveryAddress}
-          onChange={(e) => handleAddressChange(e, setDeliveryAddress, setDeliveryCoords)}
+          onChange={(e) =>
+            handleAddressChange(e, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)
+          }
+         // onBlur={() => handleBlur(setDeliverySuggestions)}
           placeholder="Delivery address"
         /><br />
-        {suggestions.length > 0 && (
+        {deliverySuggestions.length > 0 && (
           <div className="suggestion-container">
-            {suggestions.map((suggestion, index) => (
+            {deliverySuggestions.map((suggestion, index) => (
               <div
                 key={index}
-                onClick={() => handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords)}
+                onClick={() =>
+                  handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)
+                }
                 className="suggestion-item"
               >
                 {suggestion.display_name}
@@ -168,22 +214,57 @@ const QuotationPage = () => {
           </div>
         )}
 
-        <label>Weight</label><br />
-        <input name="weight" type="text" placeholder="Weight" /><br />
-        <label>Height</label><br />
-        <input name="height" type="text" placeholder="Height" /><br />
-        <label>Width</label><br />
-        <input name="width" type="text" placeholder="Width" /><br />
-        <label>Length</label><br />
-        <input name="length" type="text" placeholder="Length" /><br />
+        <label>Weight (kg)</label><br />
+        <input
+          name="weight"
+          type="text"
+          value={weight}
+          onChange={(e) => setWeight(e.target.value)}
+          placeholder="Weight"
+        /><br />
+        <label>Height (cm)</label><br />
+        <input
+          name="height"
+          type="text"
+          value={height}
+          onChange={(e) => setHeight(e.target.value)}
+          placeholder="Height"
+        /><br />
+        <label>Width (cm)</label><br />
+        <input
+          name="width"
+          type="text"
+          value={width}
+          onChange={(e) => setWidth(e.target.value)}
+          placeholder="Width"
+        /><br />
+        <label>Length (cm)</label><br />
+        <input
+          name="length"
+          type="text"
+          value={length}
+          onChange={(e) => setLength(e.target.value)}
+          placeholder="Length"
+        /><br />
 
         <button onClick={calculateDistance}>Get Quotation</button>
       </form>
 
-      {distance && <p>Distance: {distance}</p>}
-    </div>
+
+    {distance && (
+      <>
+        <p>Distance: {distance}</p>
+
+        <div>
+          <p>Shipping Dates</p>
+          <p>Regular Shipping: ${shippingPrices.regular} (delivers: {deliveryDate.regular})</p>
+          <p>Express Shipping: ${shippingPrices.express} (delivers: {deliveryDate.express})</p>
+          <p>Eco Shipping: ${shippingPrices.eco} (delivers: {deliveryDate.eco})</p>
+        </div>
+      </>
+    )}
+  </div>
   );
 };
 
 export default QuotationPage;
-

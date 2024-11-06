@@ -6,7 +6,6 @@ body {
     margin: 0;
     font-family: Alta, serif;
     min-height: 100vh;
-    overflow: hidden;
 }
 
 .layoutContainer {

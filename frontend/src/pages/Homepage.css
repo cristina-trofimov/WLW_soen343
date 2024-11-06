@@ -4,6 +4,14 @@
     font-family: Alta, serif;
     font-size: 33px;
     padding-left: 40px;
+        overflow: hidden;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+#importantInfo{
+    margin: 0;
+    padding:25px 0 0 0;
+    font-size: 33px;
 }
 
 #searchButton{
