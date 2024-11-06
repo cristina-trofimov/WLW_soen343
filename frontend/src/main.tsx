@@ -8,6 +8,7 @@ import Layout from './routes/Layout'
 import ErrorPage from './pages/ErrorPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import QuotationPage from "./pages/QuotationPage.tsx";
 
 
 const router = createBrowserRouter([
@@ -25,6 +26,11 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <HomePage />,
+
+      },
+        {
+        path: "quote",
+        element: <QuotationPage />,
 
       },
       {
