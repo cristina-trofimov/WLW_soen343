@@ -1,3 +1,4 @@
+import './QuotationPage.css';
 import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 
@@ -68,6 +69,9 @@ const QuotationPage = () => {
                     },
                 });
 
+                console.log("API Response:", response.data);
+
+
                 const distanceInMeters = response.data.distances[0][1];
                 setDistance((distanceInMeters / 1000).toFixed(2) + " km");
             } catch (error) {
@@ -76,8 +80,12 @@ const QuotationPage = () => {
             }
         }
     };
+console.log("Shipping Coordinates:", shippingCoords);
+console.log("Delivery Coordinates:", deliveryCoords);
 
     return (
+
+
         <div>
             <p>Quotation Service</p>
             <form id="quotationForm" onSubmit={(e) => e.preventDefault()}>
@@ -88,17 +96,19 @@ const QuotationPage = () => {
                     onChange={(e) => handleAddressChange(e, setShippingAddress, setShippingCoords)}
                     placeholder="Shipping address"
                 /><br />
-                <div>
-                    {suggestions.map((suggestion, index) => (
-                        <div
-                            key={index}
-                            onClick={() => handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords)}
-                            style={{ cursor: "pointer", padding: "4px" }}
-                        >
-                            {suggestion.display_name}
-                        </div>
-                    ))}
-                </div>
+                {suggestions.length > 0 && (
+                    <div className="suggestion-container">
+                        {suggestions.map((suggestion, index) => (
+                            <div
+                                key={index}
+                                onClick={() => handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords)}
+                                className="suggestion-item"
+                            >
+                                {suggestion.display_name}
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <label>Delivery Address</label><br />
                 <input
@@ -107,17 +117,19 @@ const QuotationPage = () => {
                     onChange={(e) => handleAddressChange(e, setDeliveryAddress, setDeliveryCoords)}
                     placeholder="Delivery address"
                 /><br />
-                <div>
-                    {suggestions.map((suggestion, index) => (
-                        <div
-                            key={index}
-                            onClick={() => handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords)}
-                            style={{ cursor: "pointer", padding: "4px" }}
-                        >
-                            {suggestion.display_name}
-                        </div>
-                    ))}
-                </div>
+                {suggestions.length > 0 && (
+                    <div className="suggestion-container">
+                        {suggestions.map((suggestion, index) => (
+                            <div
+                                key={index}
+                                onClick={() => handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords)}
+                                className="suggestion-item"
+                            >
+                                {suggestion.display_name}
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <label>Weight</label><br />
                 <input name="weight" type="text" placeholder="Weight" /><br />
@@ -137,3 +149,4 @@ const QuotationPage = () => {
 };
 
 export default QuotationPage;
+

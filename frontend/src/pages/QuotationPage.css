@@ -1,0 +1,18 @@
+.suggestion-container {
+    position: absolute;
+    border: 1px solid #ccc;
+    background-color: white;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1;
+}
+
+.suggestion-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
