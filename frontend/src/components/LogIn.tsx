@@ -17,7 +17,7 @@ function LogIn() {
         console.log(password)
 
         try {
-            await axiosClient.post('/login', { email, password })
+            await axiosClient.post('/login', { email, password }, { withCredentials: true, headers: { 'Access-Control-Allow-Credentials': '*', "Content-Type": "application/json" } });
 
             navigate("/home")
         } catch (error) {
@@ -34,7 +34,7 @@ function LogIn() {
                     <TextInput label="Email" placeholder="example@domain.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                     <PasswordInput label="Password" placeholder="password123!" mt="md" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </Fieldset>
-                
+
                 <Button type="button" onClick={() => logInCustomer()} variant="light">Continue</Button>
             </form>
 

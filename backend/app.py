@@ -8,19 +8,23 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "tamprongs"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///./db.sqlite"
-app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
+# app.config['SESSION_COOKIE_DOMAIN'] = '127.0.0.1'
 app.config.update(
-    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SECURE=False,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
 )
 
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+SQLALCHEMY_TRACK_MODIFICATIONS = False 
 SQLALCHEMY_ECHO = True
 
 bcrypt = Bcrypt(app)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, supports_credentials=True, allow_headers=["Content-Type", "Authorization","Access-Control-Allow-Credentials"], expose_headers=["Content-Type", "Authorization"])
+# CORS(app, support_credentials=True)
 db.init_app(app)
+
+print(app.config)
 
 with app.app_context():
     db.create_all()
@@ -36,11 +40,13 @@ def get_current_customer():
     print("Session contents:", session)
     print("All cookies:", request.cookies)
     user_id = session.get("user_id")
-    
+
     if not user_id:
         return jsonify({"error" : "Unauthorized"}), 401 
     
     user = Customer.query.filter_by(id=user_id).first()
+    
+    
     
     return jsonify({
         "id" : user.id,
@@ -91,8 +97,10 @@ def login():
             }), 401
         
     session["user_id"] = user.id
+    session["test"] = "123"
     
     print(session)
+
     
     return jsonify({
         "id": user.id,
