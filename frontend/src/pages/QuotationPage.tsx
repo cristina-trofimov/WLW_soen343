@@ -2,6 +2,21 @@ import './QuotationPage.css';
 import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 
+
+import {
+  Container,
+  Title,
+  TextInput,
+  NumberInput,
+  Select,
+  Textarea,
+  Button,
+  Group,
+  Paper,
+  Stack,
+} from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+
 // Define the type for a suggestion object
 type Suggestion = {
   display_name: string;
@@ -159,6 +174,145 @@ const updateDeliveryDates = () => {
   };
 
   return (
+//     <Container size="sm">
+//       <Title order={1} ta="center" mt="md" mb="xl">
+//         Quotation Service
+//       </Title>
+
+//       <Paper shadow="xs" p="md">
+//         <form id="quotationForm" onSubmit={(e) => e.preventDefault()}>
+//           <Stack gap="md">
+//             <TextInput
+//               label="Shipping Address"
+//               required
+//               value={shippingAddress}
+//               onChange={(e) =>
+//                 handleAddressChange(e, setShippingAddress, setShippingCoords, setShippingSuggestions)}
+//             /><br />
+//             {shippingSuggestions.length > 0 && (
+//               <div className="suggestion-container">
+//                 {shippingSuggestions.map((suggestion, index) => (
+//                   <div
+//                     key={index}
+//                     onClick={() =>
+//                       handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords, setShippingSuggestions)
+//                     }
+//                     className="suggestion-item"
+//                   >
+//                     {suggestion.display_name}
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//             <Textarea
+//               label="Delivery Address"
+//               required
+//               value={deliveryAddress}
+//               onChange={(e) =>
+//                 handleAddressChange(e, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)}
+//             /><br />
+//             {deliverySuggestions.length > 0 && (
+//               <div className="suggestion-container">
+//                 {deliverySuggestions.map((suggestion, index) => (
+//                   <div
+//                     key={index}
+//                     onClick={() =>
+//                       handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)
+//                     }
+//                     className="suggestion-item"
+//                   >
+//                     {suggestion.display_name}
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//             {/* <TextInput
+//               label="Recipient Name"
+//               required
+//               value={formData.recipientName}
+//               onChange={(e) => handleInputChange('recipientName', e.currentTarget.value)}
+//             />
+//             <Textarea
+//               label="Recipient Address"
+//               required
+//               value={formData.recipientAddress}
+//               onChange={(e) => handleInputChange('recipientAddress', e.currentTarget.value)}
+//             /> */}
+//             <NumberInput
+//               name="weight"
+//               label="Package Weight (kg)"
+//               required
+//               min={0}
+//               value={weight}
+//               onChange={(e) => setWeight(e.target.value)}
+//             />
+//             <NumberInput
+//               name="height"
+//               label="Package Height (cm)"
+//               required
+//               min={0}
+//               value={height}
+//               onChange={(e) => setHeight(e.target.value)}
+//             />
+//             <NumberInput
+//               name="width"
+//               label="Package Width (cm)"
+//               required
+//               min={0}
+//               value={width}
+//               onChange={(e) => setWidth(e.target.value)}
+//             />
+//             <NumberInput
+//               name="length"
+//               label="Package Length (cm)"
+//               required
+//               min={0}
+//               value={length}
+//               onChange={(e) => setLength(e.target.value)}
+//             />
+//             {/* <DatePickerInput
+//               label="Delivery Date"
+//               required
+//               value={formData.deliveryDate}
+//               onChange={(date) => handleInputChange('deliveryDate', date)}
+//             />
+//             <Select
+//               label="Delivery Method"
+//               required
+//               data={[
+//                 { value: 'standard', label: 'Standard' },
+//                 { value: 'express', label: 'Express' },
+//                 { value: 'overnight', label: 'Overnight' },
+//               ]}
+//               value={formData.deliveryMethod}
+//               onChange={(value) => handleInputChange('deliveryMethod', value || '')}
+//             />
+//             <Textarea
+//               label="Special Instructions"
+//               value={formData.specialInstructions}
+//               onChange={(e) => handleInputChange('specialInstructions', e.currentTarget.value)}
+//             /> */}
+//             <Group justify="right" mt="md">
+//               <Button type="submit" onClick={calculateDistance}>Get Quotation</Button>
+//             </Group>
+//           </Stack>
+//         </form>
+//       </Paper>
+//     </Container>
+
+// {distance && (
+//   <>
+//     <p>Distance: {distance}</p>
+
+//     <div>
+//       <p>Shipping Dates</p>
+//       <p>Regular Shipping: ${shippingPrices.regular} (delivers: {deliveryDate.regular})</p>
+//       <p>Express Shipping: ${shippingPrices.express} (delivers: {deliveryDate.express})</p>
+//       <p>Eco Shipping: ${shippingPrices.eco} (delivers: {deliveryDate.eco})</p>
+//     </div>
+//   </>
+// )}
+
     <div>
       <p>Quotation Service</p>
       <form id="quotationForm" onSubmit={(e) => e.preventDefault()}>
