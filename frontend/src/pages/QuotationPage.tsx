@@ -2,7 +2,7 @@ import './QuotationPage.css';
 import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 
-
+/*
 import {
   Container,
   Title,
@@ -15,7 +15,7 @@ import {
   Paper,
   Stack,
 } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates'; */
 
 // Define the type for a suggestion object
 type Suggestion = {

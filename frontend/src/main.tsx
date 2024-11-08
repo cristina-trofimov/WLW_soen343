@@ -35,11 +35,6 @@ const router = createBrowserRouter([
 
       },
         {
-        path: "quote",
-        element: <QuotationPage />,
-
-      },
-        {
         path: "order",
         element: <OrderPage />,
 
