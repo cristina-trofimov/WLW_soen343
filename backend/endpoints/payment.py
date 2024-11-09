@@ -4,13 +4,13 @@ from flask import Blueprint, request, jsonify, session
 from models import db, Customer
 from flask_bcrypt import Bcrypt
 import json
-from auth import get_current_user
+from endpoints.auth import get_current_user
 
-payment = Blueprint('payment', __name__)
+payment_blueprint = Blueprint('payment_blueprint', __name__)
 
 CURRENT_USER_FILE = 'current_user.json'
 
-@payment.route("/payment", methods=["POST"])
+@payment_blueprint.route("/payment", methods=["POST"])
 def payment():
     
     print("Hitting the payment wall")
