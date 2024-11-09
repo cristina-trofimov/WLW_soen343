@@ -10,8 +10,8 @@ bcrypt = Bcrypt()
 
 @auth.route("/register", methods=["POST"])
 def register():
-    email = request.json["email"]
-    password = request.json["password"]
+    email = request.json["registerEmail"]
+    password = request.json["registerPassword"]
     
     customer_exists = Customer.query.filter_by(email=email).first() is not None
     
@@ -30,8 +30,8 @@ def register():
 
 @auth.route("/login", methods=["POST"])  
 def login_customer():
-    email = request.json["email"]
-    password = request.json["password"]
+    email = request.json["loginEmail"]
+    password = request.json["loginPassword"]
     
     customer = Customer.query.filter_by(email=email).first()
     
