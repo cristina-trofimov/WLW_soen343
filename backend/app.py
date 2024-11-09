@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import Flask, request, jsonify, session
 from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum
 from config import ApplicationConfig
@@ -21,3 +20,6 @@ with app.app_context():
     
  
 app.register_blueprint(auth)
+
+if __name__ == "__main__":
+    app.run(debug=True)
