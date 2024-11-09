@@ -30,6 +30,7 @@ class Order(db.Model):
     price = db.Column(db.Float, nullable=False)
     packages = db.relationship('Package', backref='order', lazy=True)
     orderDetails = db.relationship('OrderDetails', backref='order', lazy=True)
+    # connect to customer
 
 class DeliveryTypeEnum(Enum):
     REGULAR = "Regular"
