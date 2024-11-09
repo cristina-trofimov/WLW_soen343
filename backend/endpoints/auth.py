@@ -122,4 +122,5 @@ def payment():
         
     return jsonify({
         "id" : user.id,
-        "email" : user.email}), 200
+        "email" : user.email,
+        "card number": number}), 200
