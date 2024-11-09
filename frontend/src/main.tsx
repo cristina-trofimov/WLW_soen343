@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import QuotationPage from "./pages/QuotationPage.tsx";
 import OrderPage from './pages/Orderpage.tsx';
+import PaymentPage from './pages/PaymentPage.tsx';
 
 
 const router = createBrowserRouter([
@@ -35,8 +36,8 @@ const router = createBrowserRouter([
 
       },
         {
-        path: "quote",
-        element: <QuotationPage />,
+        path: "payment",
+        element: <PaymentPage />,
 
       },
         {

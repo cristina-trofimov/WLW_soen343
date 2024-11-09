@@ -27,7 +27,7 @@ interface FormData {
   specialInstructions: string;
 }
 
-const OrderPage: React.FC = () => {
+const OrderPage = () => {
   const [formData, setFormData] = useState<FormData>({
     senderName: '',
     senderAddress: '',
