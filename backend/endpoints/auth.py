@@ -63,7 +63,7 @@ def get_current_customer():
     
     return jsonify({
         "id" : user.id,
-        "email" : user.email}), 200    
+        "email" : user.email}), 200
     
 @auth.route('/logout', methods=['POST']) 
 def logout():
@@ -86,5 +86,4 @@ def get_current_user():
         return None
 
 def clear_current_user():
-    save_current_user(None)   
-    
+    save_current_user(None)
