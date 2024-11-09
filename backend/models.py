@@ -29,7 +29,7 @@ class Order(db.Model):
     trackingNumber = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     price = db.Column(db.Float, nullable=False)
     packageId = db.Column(db.String(32), db.ForeignKey('packages.id'), nullable=False, index=True)
-    orderDetails = db.relationship('OrderDetails', backref='order', lazy=True)
+    orderDetailsId = db.relationship('OrderDetails', backref='order', lazy=True)
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
 
 class DeliveryTypeEnum(Enum):
@@ -40,7 +40,7 @@ class DeliveryTypeEnum(Enum):
 class OrderDetails(db.Model):
     __tablename__ = 'orderDetails'
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    trackingNumber = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
+    orderId = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
     sourceAddress = db.Column(db.String(255), nullable=False)
     departureAddress = db.Column(db.String(255), nullable=False)
     scheduledArrivalTime = db.Column(db.DateTime, nullable=True)
