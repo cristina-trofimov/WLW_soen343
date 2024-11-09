@@ -1,0 +1,20 @@
+.suggestion-container {
+  max-height: 150px;  /* Adjust the height as needed */
+  overflow-y: auto;   /* Enables scrolling if there are many suggestions */
+  border: 1px solid #ccc;  /* Adds a border for clarity */
+  background-color: white;  /* Ensures the suggestions have a white background */
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+
+.suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;  /* Highlight the item when hovered */
+}

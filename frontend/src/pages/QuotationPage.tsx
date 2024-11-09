@@ -1,29 +1,15 @@
 import './QuotationPage.css';
 import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
-
-/*
-import {
-  Container,
-  Title,
-  TextInput,
-  NumberInput,
-  Select,
-  Textarea,
-  Button,
-  Group,
-  Paper,
-  Stack,
-} from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates'; */
-
+import { Button, Container, Paper, Stack, TextInput, Textarea, Title, Group, NumberInput, Select, Alert } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 // Define the type for a suggestion object
 type Suggestion = {
   display_name: string;
   lat: string;
   lon: string;
 };
-
+/*
 const QuotationPage = () => {
   const [shippingAddress, setShippingAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -45,6 +31,54 @@ const QuotationPage = () => {
     regular: "",
     express: "",
     eco: ""
+  });*/
+interface QuotationFormData {
+  shippingAddress: string;
+  deliveryAddress: string;
+  shippingCoords: [number, number] | null;
+  deliveryCoords: [number, number] | null;
+  shippingSuggestions: Suggestion[];
+  deliverySuggestions: Suggestion[];
+  distance: string | null;
+  weight: string;
+  height: string;
+  width: string;
+  length: string;
+  shippingPrices: {
+    regular: number;
+    express: number;
+    eco: number;
+  };
+  deliveryDate: {
+    regular: string;
+    express: string;
+    eco: string;
+  };
+}
+
+const QuotationPage: React.FC = () => {
+  const [QuotationFormData, setQuotationFormData] = useState<QuotationFormData>({
+    shippingAddress: '',
+    deliveryAddress: '',
+    shippingCoords: null,
+    deliveryCoords: null,
+    shippingSuggestions: [],
+    deliverySuggestions: [],
+    distance: null,
+    weight: '',
+    height: '',
+    width: '',
+    length: '',
+    shippingPrices: {
+      regular: 0,
+      express: 0,
+      eco: 0,
+    },
+    deliveryDate: {
+      regular: "",
+      express: "",
+      eco: ""
+    }
   });
 
   // Handle address input change
@@ -86,7 +120,7 @@ const QuotationPage = () => {
 
   // Function to calculate the shipping prices
   const calculateShippingPrices = (distance: number) => {
-    if (!weight || !height || !width || !length) {
+    if (!width || !height || !width || !length) {
       alert('Please fill all package dimensions (weight, height, width, length)');
       return;
     }
