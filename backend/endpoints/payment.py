@@ -16,7 +16,7 @@ def payment():
     print("Hitting the payment wall")
     number = request.json["number"]
     name = request.json["name"]
-    expiration_date = request.json["expriation_date"]
+    expiration_date = request.json["expriationDate"]
     cvv = request.json["cvv"]
 
     if not number or not name or not expiration_date or not cvv:
@@ -44,4 +44,4 @@ def payment():
     return jsonify({
         "id" : user.id,
         "email" : user.email,
-        "card number": number}), 200
+        "cardNumber": number}), 200
