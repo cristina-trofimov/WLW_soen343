@@ -1,15 +1,13 @@
+# order.py
+
 from flask import Blueprint, request, jsonify
 from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum
 import json
-from auth import get_current_user
+from endpoints.auth import get_current_user
 
 order = Blueprint('order', __name__)
 
-from flask import Blueprint, request, jsonify
-from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum, get_uuid
-from datetime import datetime
-
-order = Blueprint('order', __name__)
+CURRENT_USER_FILE = 'current_user.json'
 
 @order.route("/create_order", methods=["POST"])
 def createOrder():
@@ -43,7 +41,6 @@ def createOrder():
             return jsonify({"error": f"Invalid delivery method. Must be one of: {', '.join([e.value for e in DeliveryTypeEnum])}"}), 400
 
         # Get current user ID (assumes function get_current_user() is defined in the same module)
-        from auth import get_current_user
         customer_id = get_current_user()
         if not customer_id:
             return jsonify({"error": "Unauthorized. Please log in."}), 401
