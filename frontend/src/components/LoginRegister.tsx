@@ -7,12 +7,12 @@ import {
   Button,
   Tabs,
   Box,
-  Title,
+  Text,
   Alert,
 } from '@mantine/core';
 import axiosClient from '../axiosClient';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios';
+import axios from 'axios';
 
 interface DrawerProps {
   opened: boolean;
@@ -28,7 +28,7 @@ const LoginRegisterDrawer: React.FC<DrawerProps> = ({ opened, onClose }) => {
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
 
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
 
@@ -36,19 +36,20 @@ const LoginRegisterDrawer: React.FC<DrawerProps> = ({ opened, onClose }) => {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(loginEmail)
-    console.log(loginPassword)
-
     handleEmailValidator(loginEmail);
 
     try {
         await axiosClient.post('/login', { loginEmail, loginPassword })
+        sessionStorage.setItem("isLogged", "true");
         navigate("/home")
         onClose();
     } catch (error) {
-        if ((error as AxiosError).response?.status === 401) {
-            setLoginError("Invalid email or password");
-            // alert("Invalid email or password")
+        if (axios.isAxiosError(error)) {
+            const response = error.response;
+            if (response?.status === 401) {
+                const errorMessage = (response.data as { error?: string }).error;
+                setSubmitError(errorMessage ? errorMessage : null);
+            }
         }
     }
   };
@@ -56,40 +57,43 @@ const LoginRegisterDrawer: React.FC<DrawerProps> = ({ opened, onClose }) => {
   const handleEmailValidator = (email: string) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     setEmailError(!emailPattern.test(email) ? "This email isn't valid" : null);
-    // TODO: delete this
-    setLoginError("Invalid email or password. Please try again")
     return;
   };
 
   const handleRegisterPassword = () => {
-    // if (!registerPassword || !registerConfirmPassword) {
-    //     setRegisterError('Password cannot be empty');
-    //     return;
-    // }
-
     setRegisterError((registerPassword !== registerConfirmPassword) ? 'Passwords do not match' : null);
     return;
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(registerEmail)
-    console.log(registerPassword)
-
     handleEmailValidator(registerEmail);
     handleRegisterPassword();
-    const response = await axiosClient.post('/register', { registerEmail, registerPassword })
 
-    if(response.status === 201) {
-        console.log('Register submitted:', { email: registerEmail, password: registerPassword });
-        onClose();
+    try {
+        const response = await axiosClient.post('/register', { registerEmail, registerPassword })
+        if(response.status === 201) {
+            console.log('Register submitted:', { email: registerEmail, password: registerPassword });
+            // navigate somewhere else or login immediatly?
+            onClose();
+        } else {
+            setSubmitError(response.data.error);
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const response = error.response;
+            if (response?.status === 409) {
+                const errorMessage = (response.data as { error?: string }).error;
+                setSubmitError(errorMessage ? errorMessage : null);
+            }
+        }
     }
   };
 
   const resetErrors = (tab: string | null) => {
     setActiveTab(tab);
     if (tab) {
-        setLoginError(null)
+        setSubmitError(null)
         setRegisterError(null)
         setEmailError(null)
     }
@@ -98,19 +102,19 @@ const LoginRegisterDrawer: React.FC<DrawerProps> = ({ opened, onClose }) => {
   return (
     <Drawer opened={opened} onClose={onClose} title="loginRegister" padding="xl" size="md">
     {/* position="right" => for drawer to open from the right */}
-        {/* <Title>Welcome to WLW</Title> */}
       <Tabs value={activeTab} onChange={resetErrors}>
         <Tabs.List>
           <Tabs.Tab value="login">Login</Tabs.Tab>
           <Tabs.Tab value="register">Register</Tabs.Tab>
         </Tabs.List>
 
+        {submitError && (
+            <Alert color="red" variant='filled'>
+                <Text color='red.9'>{submitError}</Text>
+            </Alert>
+        )}
+
         <Tabs.Panel value="login">
-        {loginError && (
-                <Alert color="red" variant='filled' title={loginError}>
-                    {loginError}
-                </Alert>
-            )}
           <form onSubmit={handleLoginSubmit}>
           
             <Box mt="md">
@@ -192,7 +196,7 @@ const LoginRegister = () => {
 
   return (
     <div>
-      <Button className={classes.loginButton} onClick={() => setDrawerOpened(true)}>Login/Register</Button>
+      <Button className={classes.loginButton} ml="xl" onClick={() => setDrawerOpened(true)}>Login/Register</Button>
       <LoginRegisterDrawer opened={drawerOpened} onClose={() => setDrawerOpened(false)} />
     </div>
   );

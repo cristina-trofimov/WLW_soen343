@@ -4,13 +4,13 @@ import {
   Title,
   TextInput,
   NumberInput,
-  Select,
   Button,
   Group,
   Paper,
   Stack,
   Text,
 } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
 interface PaymentFormData {
   cardNumber: string;
@@ -21,6 +21,7 @@ interface PaymentFormData {
 }
 
 const PaymentPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<PaymentFormData>({
     cardNumber: "",
     cardHolder: "",
@@ -32,54 +33,61 @@ const PaymentPage = () => {
   const [cvvError, setCvvError] = useState<string | null>(null);
   const [cardNumError, setCardNumError] = useState<string | null>(null);
 
-  const handleInputChange = (name: keyof PaymentFormData, value: string | number) => {
+  const handleInputChange = ( name: keyof PaymentFormData, value: string | number ) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCardNumChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
-    let value = e.currentTarget.value.replace(/\D/g, ''); // Remove non-digit characters
-    
+  const handleCardNumChange = ( e: React.FormEvent<HTMLInputElement>, isBlur: boolean ) => {
+    let value = e.currentTarget.value.replace(/\D/g, ""); // Remove non-digit characters
+
     if (value.length > 16) {
       value = value.slice(0, 16); // Limit to 16 digits
     }
 
-    const formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 '); // Add spaces after every 4 digits
+    const formattedValue = value.replace(/(\d{4})(?=\d)/g, "$1 "); // Add spaces after every 4 digits
 
-    setCardNumError((isBlur && value.length < 16) ? "This is not a valid card number" : null);
+    setCardNumError(
+      isBlur && value.length < 16 ? "This is not a valid card number" : null
+    );
 
     setFormData((prev) => ({ ...prev, cardNumber: formattedValue }));
   };
 
-  const handleExpDateChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
-    let value = e.currentTarget.value.replace(/[^\d/]/g, ''); // Remove non-digit and non-slash characters
-    
+  const handleExpDateChange = ( e: React.FormEvent<HTMLInputElement>, isBlur: boolean ) => {
+    let value = e.currentTarget.value.replace(/[^\d/]/g, ""); // Remove non-digit and non-slash characters
+
     if (value.length > 5) {
       value = value.slice(0, 5); // Limit to 5 characters
     }
 
-    if (value.length === 2 && !value.includes('/')) {
-      value += '/';
-    } else if (value.length === 2 && value.includes('/')) {
-      value = '0' + value; // Add leading zero if only one digit before slash
-    } else if (value.length === 3 && !value.includes('/')) {
-      value = value.slice(0, 2) + '/' + value.slice(2);
+    if (value.length === 2 && !value.includes("/")) {
+      value += "/";
+    } else if (value.length === 2 && value.includes("/")) {
+      value = "0" + value; // Add leading zero if only one digit before slash
+    } else if (value.length === 3 && !value.includes("/")) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
     }
 
     if (isBlur) {
-        if (value.length < 5) {
-            value = '0' + value.charAt(0) + '/' + value.charAt(1) + value.charAt(3);
-        }
+      if (value.length < 5) {
+        value = "0" + value.charAt(0) + "/" + value.charAt(1) + value.charAt(3);
+      }
     }
 
     setFormData((prev) => ({ ...prev, expirationDate: value }));
   };
 
-  const handleCvvChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
+  const handleCvvChange = ( e: React.FormEvent<HTMLInputElement>, isBlur: boolean ) => {
     const value = e.currentTarget.value;
     const numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
 
-    if (isBlur) { // Displays error message is cvv is too short or too long when this field is not in focus
-        setCvvError(numericValue.length > 0 && numericValue.length < 3 ? "CVV must be 3 or 4 digits" : null);
+    if (isBlur) {
+      // Displays error message is cvv is too short or too long when this field is not in focus
+      setCvvError(
+        numericValue.length > 0 && numericValue.length < 3
+          ? "CVV must be 3 or 4 digits"
+          : null
+      );
     }
     setFormData((prev) => ({ ...prev, cvv: numericValue }));
   };
@@ -87,14 +95,13 @@ const PaymentPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Payment submitted:", formData);
+    navigate("/home");
     // Send to payment processor
   };
 
   return (
     <Container size="sm">
-      <Title order={1} ta="center" mt="md" mb="xl">
-        Payment Details
-      </Title>
+      <Title order={1} ta="center" mt="md" mb="xl">Payment Details</Title>
 
       <Paper shadow="xs" p="md">
         <form onSubmit={handleSubmit}>
@@ -146,7 +153,12 @@ const PaymentPage = () => {
               min={0}
               value={formData.amount}
             />
-            <Button type="submit" fullWidth mt="md">
+            <Button
+              type="submit"
+              fullWidth
+              mt="md"
+              onClick={() => navigate("/order/payment")}
+            >
               Pay Now
             </Button>
           </Stack>

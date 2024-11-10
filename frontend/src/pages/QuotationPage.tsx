@@ -1,424 +1,329 @@
 import './QuotationPage.css';
-import { useState, ChangeEvent } from 'react';
+import {useState, ChangeEvent} from 'react';
 import axios from 'axios';
-
-
 import {
-  Container,
-  Title,
-  TextInput,
-  NumberInput,
-  Select,
-  Textarea,
-  Button,
-  Group,
-  Paper,
-  Stack,
+    Button,
+    Container,
+    Paper,
+    Stack,
+    TextInput,
+    Title,
+    Group,
+    NumberInput
 } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
 
-// Define the type for a suggestion object
 type Suggestion = {
-  display_name: string;
-  lat: string;
-  lon: string;
+    display_name: string;
+    lat: string;
+    lon: string;
 };
 
-const QuotationPage = () => {
-  const [shippingAddress, setShippingAddress] = useState('');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [shippingCoords, setShippingCoords] = useState<[number, number] | null>(null);
-  const [deliveryCoords, setDeliveryCoords] = useState<[number, number] | null>(null);
-  const [shippingSuggestions, setShippingSuggestions] = useState<Suggestion[]>([]);
-  const [deliverySuggestions, setDeliverySuggestions] = useState<Suggestion[]>([]);
-  const [distance, setDistance] = useState<string | null>(null);
-  const [weight, setWeight] = useState('');
-  const [height, setHeight] = useState('');
-  const [width, setWidth] = useState('');
-  const [length, setLength] = useState('');
-  const [shippingPrices, setShippingPrices] = useState({
-    regular: 0,
-    express: 0,
-    eco: 0
-  });
-   const [deliveryDate, setDeliveryDate] = useState({
-    regular: "",
-    express: "",
-    eco: ""
-  });
+interface QuotationFormData {
+    senderAddress: string;
+    recipientAddress: string;
+    senderAddressCoords: [number, number] | null;
+    recipientAddressCoords: [number, number] | null;
+    senderAddressSuggestions: Suggestion[];
+    recipientAddressSuggestions: Suggestion[];
+    distance: string | null;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
+    shippingPrices: {
+        regular: number;
+        express: number;
+        eco: number;
+    };
+    deliveryDate: {
+        regular: string;
+        express: string;
+        eco: string;
+    };
+}
 
-  // Handle address input change
-  const handleAddressChange = async (
-    e: ChangeEvent<HTMLInputElement>,
-    setAddress: React.Dispatch<React.SetStateAction<string>>,
-    setCoords: React.Dispatch<React.SetStateAction<[number, number] | null>>,
-    setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>
-  ) => {
-    const query = e.target.value;
-    setAddress(query);
-
-    if (query.length > 2) {
-      try {
-        const response = await axios.get(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=ca`
-        );
-        setSuggestions(response.data);
-        setCoords(null);  // Clear previous coordinates
-      } catch (error) {
-        console.error('Error fetching address suggestions:', error);
-      }
-    } else {
-      setSuggestions([]);
-    }
-  };
-
-  // Handle suggestion selection
-  const handleSelectSuggestion = (
-    suggestion: Suggestion,
-    setAddress: React.Dispatch<React.SetStateAction<string>>,
-    setCoords: React.Dispatch<React.SetStateAction<[number, number] | null>>,
-    setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>
-  ) => {
-    setAddress(suggestion.display_name);
-    setCoords([parseFloat(suggestion.lat), parseFloat(suggestion.lon)]);
-    setSuggestions([]);
-  };
-
-  // Function to calculate the shipping prices
-  const calculateShippingPrices = (distance: number) => {
-    if (!weight || !height || !width || !length) {
-      alert('Please fill all package dimensions (weight, height, width, length)');
-      return;
-    }
-
-    const packageWeight = parseFloat(weight);
-    const packageHeight = parseFloat(height);
-    const packageWidth = parseFloat(width);
-    const packageLength = parseFloat(length);
-
-    // Basic calculation for volume and weight-based price (just a sample formula)
-    const volume = packageHeight * packageWidth * packageLength; // Volume in cubic units
-    const basePrice = volume * 0.10 + packageWeight * 0.25+5+0.90*distance; // Example formula for price calculation
-
-    // Calculate prices based on the shipping methods
-    const regularPrice = basePrice;
-    const expressPrice = regularPrice * 1.2; // Express shipping is 20% more expensive
-    const ecoPrice = regularPrice * 0.8; // Eco shipping is 20% cheaper
-
-    // Update the state with the prices
-    setShippingPrices({
-      regular: parseFloat(regularPrice.toFixed(2)),
-      express: parseFloat(expressPrice.toFixed(2)),
-      eco: parseFloat(ecoPrice.toFixed(2))
-    });
-  };
- // const handleBlur = (setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>) => {
- //   setSuggestions([]);  // Hide suggestions when the input loses focus
-  //};
-    const calculateDeliveryDate = (daysToAdd: number): string => {
-    const today = new Date();
-    today.setDate(today.getDate() + daysToAdd);
-    return today.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-const updateDeliveryDates = () => {
-    setDeliveryDate({
-      regular: calculateDeliveryDate(5),   // Regular: 5 days from today
-      express: calculateDeliveryDate(2),   // Express: 2 days from today
-      eco: calculateDeliveryDate(8)        // Eco: 8 days from today
-    });
-  };
-  // Calculate the distance using OpenRouteService API
-  const calculateDistance = () => {
-    if (shippingCoords && deliveryCoords) {
-      const apiKey = '5b3ce3597851110001cf6248f835839e4a72421881fa97ad83367c9d'; // Your OpenRouteService API Key
-      const url = `https://api.openrouteservice.org/v2/directions/driving-car/geojson`;
-
-      // Create a new XMLHttpRequest
-      const request = new XMLHttpRequest();
-
-      request.open('POST', url);
-      request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.setRequestHeader('Authorization', apiKey);
-
-      request.onreadystatechange = function () {
-        if (this.readyState === 4) {
-          if (this.status === 200) {
-            const responseData = JSON.parse(this.responseText);
-            const distanceInMeters = responseData.features[0].properties.segments[0].distance;
-            const distanceInKm = (distanceInMeters / 1000).toFixed(2);
-            setDistance(distanceInKm + ' km');
-            calculateShippingPrices(parseFloat(distanceInKm));
-            updateDeliveryDates();
-          } else {
-            setDistance('Error calculating distance');
-          }
+const QuotationPage: React.FC = () => {
+    const [qFormData, setQFormData] = useState<QuotationFormData>({
+        senderAddress: '',
+        recipientAddress: '',
+        senderAddressCoords: null,
+        recipientAddressCoords: null,
+        senderAddressSuggestions: [],
+        recipientAddressSuggestions: [],
+        distance: null,
+        weight: 0,
+        height: 0,
+        width: 0,
+        length: 0,
+        shippingPrices: {
+            regular: 0,
+            express: 0,
+            eco: 0,
+        },
+        deliveryDate: {
+            regular: "",
+            express: "",
+            eco: ""
         }
-      };
+    });
+    const [senderAddressError, setSenderAddressError] = useState<string | null>(null);
+    const [recipientAddressError, setRecipientAddressError] = useState<string | null>(null);
+    const [isResultsVisible, setIsResultsVisible] = useState(false);
 
-      const body = `{
-        "coordinates": [
-          [${shippingCoords[1]}, ${shippingCoords[0]}],
-          [${deliveryCoords[1]}, ${deliveryCoords[0]}]
-        ]
-      }`;
 
-      request.send(body);
-    } else {
-      setDistance('Invalid coordinates');
-    }
-  };
+    // Main form data change handler
+    const handleInputChange = (field: keyof QuotationFormData, value: any) => {
+        setQFormData((prevData) => ({
+            ...prevData,
+            [field]: value,
+        }));
+    };
 
-  return (
-//     <Container size="sm">
-//       <Title order={1} ta="center" mt="md" mb="xl">
-//         Quotation Service
-//       </Title>
+    const handleAddressChange = async (e: ChangeEvent<HTMLInputElement>,
+                                       addressType: 'senderAddress' | 'recipientAddress') => {
+        const query = e.target.value;
 
-//       <Paper shadow="xs" p="md">
-//         <form id="quotationForm" onSubmit={(e) => e.preventDefault()}>
-//           <Stack gap="md">
-//             <TextInput
-//               label="Shipping Address"
-//               required
-//               value={shippingAddress}
-//               onChange={(e) =>
-//                 handleAddressChange(e, setShippingAddress, setShippingCoords, setShippingSuggestions)}
-//             /><br />
-//             {shippingSuggestions.length > 0 && (
-//               <div className="suggestion-container">
-//                 {shippingSuggestions.map((suggestion, index) => (
-//                   <div
-//                     key={index}
-//                     onClick={() =>
-//                       handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords, setShippingSuggestions)
-//                     }
-//                     className="suggestion-item"
-//                   >
-//                     {suggestion.display_name}
-//                   </div>
-//                 ))}
-//               </div>
-//             )}
-//             <Textarea
-//               label="Delivery Address"
-//               required
-//               value={deliveryAddress}
-//               onChange={(e) =>
-//                 handleAddressChange(e, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)}
-//             /><br />
-//             {deliverySuggestions.length > 0 && (
-//               <div className="suggestion-container">
-//                 {deliverySuggestions.map((suggestion, index) => (
-//                   <div
-//                     key={index}
-//                     onClick={() =>
-//                       handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)
-//                     }
-//                     className="suggestion-item"
-//                   >
-//                     {suggestion.display_name}
-//                   </div>
-//                 ))}
-//               </div>
-//             )}
-//             {/* <TextInput
-//               label="Recipient Name"
-//               required
-//               value={formData.recipientName}
-//               onChange={(e) => handleInputChange('recipientName', e.currentTarget.value)}
-//             />
-//             <Textarea
-//               label="Recipient Address"
-//               required
-//               value={formData.recipientAddress}
-//               onChange={(e) => handleInputChange('recipientAddress', e.currentTarget.value)}
-//             /> */}
-//             <NumberInput
-//               name="weight"
-//               label="Package Weight (kg)"
-//               required
-//               min={0}
-//               value={weight}
-//               onChange={(e) => setWeight(e.target.value)}
-//             />
-//             <NumberInput
-//               name="height"
-//               label="Package Height (cm)"
-//               required
-//               min={0}
-//               value={height}
-//               onChange={(e) => setHeight(e.target.value)}
-//             />
-//             <NumberInput
-//               name="width"
-//               label="Package Width (cm)"
-//               required
-//               min={0}
-//               value={width}
-//               onChange={(e) => setWidth(e.target.value)}
-//             />
-//             <NumberInput
-//               name="length"
-//               label="Package Length (cm)"
-//               required
-//               min={0}
-//               value={length}
-//               onChange={(e) => setLength(e.target.value)}
-//             />
-//             {/* <DatePickerInput
-//               label="Delivery Date"
-//               required
-//               value={formData.deliveryDate}
-//               onChange={(date) => handleInputChange('deliveryDate', date)}
-//             />
-//             <Select
-//               label="Delivery Method"
-//               required
-//               data={[
-//                 { value: 'standard', label: 'Standard' },
-//                 { value: 'express', label: 'Express' },
-//                 { value: 'overnight', label: 'Overnight' },
-//               ]}
-//               value={formData.deliveryMethod}
-//               onChange={(value) => handleInputChange('deliveryMethod', value || '')}
-//             />
-//             <Textarea
-//               label="Special Instructions"
-//               value={formData.specialInstructions}
-//               onChange={(e) => handleInputChange('specialInstructions', e.currentTarget.value)}
-//             /> */}
-//             <Group justify="right" mt="md">
-//               <Button type="submit" onClick={calculateDistance}>Get Quotation</Button>
-//             </Group>
-//           </Stack>
-//         </form>
-//       </Paper>
-//     </Container>
+        // Update the formData state for the appropriate address field
+        setQFormData((prev) => ({
+            ...prev,
+            [addressType]: query,
+        }));
 
-// {distance && (
-//   <>
-//     <p>Distance: {distance}</p>
+        if (query.length > 2) {
+            try {
+                const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=ca`);
 
-//     <div>
-//       <p>Shipping Dates</p>
-//       <p>Regular Shipping: ${shippingPrices.regular} (delivers: {deliveryDate.regular})</p>
-//       <p>Express Shipping: ${shippingPrices.express} (delivers: {deliveryDate.express})</p>
-//       <p>Eco Shipping: ${shippingPrices.eco} (delivers: {deliveryDate.eco})</p>
-//     </div>
-//   </>
-// )}
+                // Update suggestions and clear previous coordinates based on the address type
+                setQFormData((prev) => ({
+                    ...prev,
+                    [`${addressType}Suggestions`]: response.data,
+                    [`${addressType}Coords`]: null, // Clear previous coordinates
+                }));
+            } catch (error) {
+                console.error("Error fetching address suggestions:", error);
+            }
+        } else {
+            // Clear suggestions if the query is too short
+            setQFormData((prev) => ({
+                ...prev,
+                [`${addressType}Suggestions`]: [],
+            }));
+        }
+    };
 
-    <div>
-      <p>Quotation Service</p>
-      <form id="quotationForm" onSubmit={(e) => e.preventDefault()}>
-        <label>Shipping Address</label><br />
-        <input
-          type="text"
-          value={shippingAddress}
-          onChange={(e) =>
-            handleAddressChange(e, setShippingAddress, setShippingCoords, setShippingSuggestions)
-          }
-         // onBlur={() => handleBlur(setShippingSuggestions)}
-          placeholder="Shipping address"
-        /><br />
-        {shippingSuggestions.length > 0 && (
-          <div className="suggestion-container">
-            {shippingSuggestions.map((suggestion, index) => (
-              <div
-                key={index}
-                onClick={() =>
-                  handleSelectSuggestion(suggestion, setShippingAddress, setShippingCoords, setShippingSuggestions)
+
+    // Handle suggestion selection
+    const handleSelectSuggestion = (
+        suggestion: Suggestion,
+        addressType: 'senderAddress' | 'recipientAddress'
+    ) => {
+        setQFormData((prev) => ({
+            ...prev,
+            [addressType]: suggestion.display_name,
+            [`${addressType}Coords`]: [parseFloat(suggestion.lat), parseFloat(suggestion.lon)],
+            [`${addressType}Suggestions`]: [],
+        }));
+    };
+    // Function to calculate the shipping prices
+    const calculateShippingPrices = (distance: number) => {
+        if (!qFormData.weight || !qFormData.height || !qFormData.width || !qFormData.length) {
+            alert('Please fill all package dimensions (weight, height, width, length)');
+            return;
+        }
+
+        // Basic calculation for volume and weight-based price (just a sample formula)
+        const volume = qFormData.height * qFormData.width * qFormData.length; // Volume in cubic units
+        const basePrice = volume * 0.10 + qFormData.weight * 0.25 + 5 + 0.90 * distance; // Price formula
+
+        // Calculate prices based on the shipping methods
+        const regularPrice = basePrice;
+        const expressPrice = regularPrice * 1.2; // Express shipping is 20% more expensive
+        const ecoPrice = regularPrice * 0.8; // Eco shipping is 20% cheaper
+
+        // Update the state with the prices
+        qFormData.shippingPrices = ({
+            regular: parseFloat(regularPrice.toFixed(2)),
+            express: parseFloat(expressPrice.toFixed(2)),
+            eco: parseFloat(ecoPrice.toFixed(2))
+        });
+    };
+    const calculateDeliveryDate = (daysToAdd: number): string => {
+        const today = new Date();
+        today.setDate(today.getDate() + daysToAdd);
+        return today.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+    const updateDeliveryDates = () => {
+        qFormData.deliveryDate = ({
+            regular: calculateDeliveryDate(5),   // Regular: 5 days from today
+            express: calculateDeliveryDate(2),   // Express: 2 days from today
+            eco: calculateDeliveryDate(8)        // Eco: 8 days from today
+        });
+    };
+
+    // Calculate the distance using OpenRouteService API
+    const calculateDistance = () => {
+
+        if (!qFormData.senderAddressCoords) {
+            setSenderAddressError('Please select a valid sender address');
+            return;
+        } else if (!qFormData.recipientAddressCoords) {
+            setRecipientAddressError('Please select a valid recipient address');
+            return;
+        } else {
+            setSenderAddressError(null);
+            setRecipientAddressError(null);
+        }
+
+        if (qFormData.senderAddressCoords && qFormData.recipientAddressCoords) {
+            const apiKey = '5b3ce3597851110001cf6248f835839e4a72421881fa97ad83367c9d'; // Your OpenRouteService API Key
+            const url = `https://api.openrouteservice.org/v2/directions/driving-car/geojson`;
+            const body = `{
+            "coordinates": [
+                [${qFormData.senderAddressCoords[1]}, ${qFormData.senderAddressCoords[0]}],
+                [${qFormData.recipientAddressCoords[1]}, ${qFormData.recipientAddressCoords[0]}]
+            ]
+        }`;
+            // Create a new XMLHttpRequest
+            const request = new XMLHttpRequest();
+            request.open('POST', url);
+            request.setRequestHeader('Accept', 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.setRequestHeader('Authorization', apiKey);
+
+            request.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        const responseData = JSON.parse(this.responseText);
+                        const distanceInMeters = responseData.features[0].properties.segments[0].distance;
+                        const distanceInKm = (distanceInMeters / 1000).toFixed(2);
+                        qFormData.distance = distanceInKm + 'km';
+                        calculateShippingPrices(parseFloat(distanceInKm));
+                        updateDeliveryDates();
+                        setIsResultsVisible(true);
+
+                    } else {
+                        qFormData.distance = 'Error calculating distance';
+                        setIsResultsVisible(false);
+                    }
                 }
-                className="suggestion-item"
-              >
-                {suggestion.display_name}
-              </div>
-            ))}
-          </div>
-        )}
+            };
+            request.send(body);
 
-        <label>Delivery Address</label><br />
-        <input
-          type="text"
-          value={deliveryAddress}
-          onChange={(e) =>
-            handleAddressChange(e, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)
-          }
-         // onBlur={() => handleBlur(setDeliverySuggestions)}
-          placeholder="Delivery address"
-        /><br />
-        {deliverySuggestions.length > 0 && (
-          <div className="suggestion-container">
-            {deliverySuggestions.map((suggestion, index) => (
-              <div
-                key={index}
-                onClick={() =>
-                  handleSelectSuggestion(suggestion, setDeliveryAddress, setDeliveryCoords, setDeliverySuggestions)
-                }
-                className="suggestion-item"
-              >
-                {suggestion.display_name}
-              </div>
-            ))}
-          </div>
-        )}
+        } else {
+            qFormData.distance = 'Invalid coordinates';
+            setIsResultsVisible(false);
 
-        <label>Weight (kg)</label><br />
-        <input
-          name="weight"
-          type="text"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          placeholder="Weight"
-        /><br />
-        <label>Height (cm)</label><br />
-        <input
-          name="height"
-          type="text"
-          value={height}
-          onChange={(e) => setHeight(e.target.value)}
-          placeholder="Height"
-        /><br />
-        <label>Width (cm)</label><br />
-        <input
-          name="width"
-          type="text"
-          value={width}
-          onChange={(e) => setWidth(e.target.value)}
-          placeholder="Width"
-        /><br />
-        <label>Length (cm)</label><br />
-        <input
-          name="length"
-          type="text"
-          value={length}
-          onChange={(e) => setLength(e.target.value)}
-          placeholder="Length"
-        /><br />
+        }
+    };
 
-        <button onClick={calculateDistance}>Get Quotation</button>
-      </form>
+    return (
+        <Container size="sm">
+            <Title order={1} ta="center" mt="md" mb="xl">
+                Package Quotation
+            </Title>
 
+            <Paper shadow="xs" p="md">
+                <form>
+                    <Stack gap="md">
+                        <TextInput
+                            label="Sender Address"
+                            required
+                            value={qFormData.senderAddress}
+                            onChange={(e) => handleAddressChange(e, 'senderAddress')}
+                            error={senderAddressError}
+                        />
+                        {qFormData.senderAddressSuggestions.length > 0 && (
+                            <div className="suggestion-container" id="sender-suggestion">
+                                {qFormData.senderAddressSuggestions.map((suggestion, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() =>
+                                            handleSelectSuggestion(suggestion, 'senderAddress')
+                                        }
+                                        className="suggestion-item"
+                                    >
+                                        {suggestion.display_name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        < TextInput
+                            label="Recipient Address"
+                            required
+                            value={qFormData.recipientAddress}
+                            onChange={(e) => handleAddressChange(e, 'recipientAddress')}
+                            error={recipientAddressError}
+                        />
+                        {qFormData.recipientAddressSuggestions.length > 0 && (
+                            <div className="suggestion-container" id="recipient-suggestion">
+                                {qFormData.recipientAddressSuggestions.map((suggestion, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() =>
+                                            handleSelectSuggestion(suggestion, 'recipientAddress')
+                                        }
+                                        className="suggestion-item"
+                                    >
+                                        {suggestion.display_name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <NumberInput
+                            label="Package Weight (kg)"
+                            required
+                            min={0}
+                            value={qFormData.weight}
+                            onChange={(value) => handleInputChange('weight', value || 0)}
+                        />
+                        <NumberInput
+                            label="Package Width (cm)"
+                            required
+                            min={0}
+                            value={qFormData.width}
+                            onChange={(value) => handleInputChange('width', value || 0)}
+                        />
+                        <NumberInput
+                            label="Package Length (cm)"
+                            required
+                            min={0}
+                            value={qFormData.length}
+                            onChange={(value) => handleInputChange('length', value || 0)}
+                        />
+                        <NumberInput
+                            label="Package Height (cm)"
+                            required
+                            min={0}
+                            value={qFormData.height}
+                            onChange={(value) => handleInputChange('height', value || 0)}
+                        />
+                        <Group justify="right" mt="md">
+                            <Button onClick={calculateDistance}>check Quote</Button>
+                        </Group>
+                    </Stack>
+                </form>
+            </Paper>
 
-    {distance && (
-      <>
-        <p>Distance: {distance}</p>
+            {isResultsVisible && (
+                <>
+                    <p>Distance: {qFormData.distance}</p>
 
-        <div>
-          <p>Shipping Dates</p>
-          <p>Regular Shipping: ${shippingPrices.regular} (delivers: {deliveryDate.regular})</p>
-          <p>Express Shipping: ${shippingPrices.express} (delivers: {deliveryDate.express})</p>
-          <p>Eco Shipping: ${shippingPrices.eco} (delivers: {deliveryDate.eco})</p>
-        </div>
-      </>
-    )}
-  </div>
-  );
+                    <div>
+                        <p>Shipping prices & Dates</p>
+                        <p>Regular Shipping: ${qFormData.shippingPrices.regular} - delivers
+                            on {qFormData.deliveryDate.regular}</p>
+                        <p>Express Shipping: ${qFormData.shippingPrices.express} - delivers
+                            on {qFormData.deliveryDate.express}</p>
+                        <p>Eco Shipping: ${qFormData.shippingPrices.eco} - delivers on {qFormData.deliveryDate.eco}</p>
+                    </div>
+                </>
+            )}
+        </Container>
+    );
 };
 
 export default QuotationPage;
