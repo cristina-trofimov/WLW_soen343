@@ -98,28 +98,62 @@ const handleInputChange = (field: keyof FormData, value: any) => {
     [field]: value,
   }));
 };
+const validatePhoneNumber = () => {
+  const phoneString = formData.recipientPhone.toString();
+  if (phoneString.length !== 10) {
+    setPhoneError('Recipient phone number must be exactly 10 digits.');
+    return false;
+  }
+  setPhoneError(null);
+  return true;
+};
 
-// Handle form submission with final validation and distance calculation
-const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  // Final phone validation
-  const phoneString = formData.recipientPhone.toString();
-  if (phoneString.length !== 9) {
-    setPhoneError('Recipient phone number must be exactly 9 digits.');
+  // Validate phone number before continuing
+  if (!validatePhoneNumber()) {
     return;
-  } else {
-    setPhoneError('');
   }
 
-  // Ensure that shipping and delivery coordinates are present before submitting
-  const { senderAddressCoords, recipientAddressCoords } = formData;
-  if (senderAddressCoords && recipientAddressCoords) {
-    calculateDistance(); // Final distance calculation before form submission
+  // Wait for calculateDistance to finish
+  await calculateDistance();
+
+  // Check if distance calculation was successful (optional)
+  if (formData.distance === 'Error calculating distance' || formData.distance === 'Invalid coordinates') {
+    console.error('Cannot submit: Invalid distance data');
+    return;
+  }
+    console.log("Form data after calculating distance:", formData);
+
+  // Check if distance calculation was successful
+  if (formData.distance === 'Error calculating distance' || formData.distance === 'Invalid coordinates') {
+    console.error('Cannot submit: Invalid distance data');
+    return;
   }
 
-  console.log('Form submitted:', formData);
-  // Here you would typically send the data to your backend
+  // Log formData just before sending the request
+  console.log("Final formData ready for submission:", formData);
+
+  // Send formData as JSON in the POST request
+  try {
+    const response = await fetch('/submit-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData), // sending formData as JSON
+    });
+
+    if (response.ok) {
+      // Handle successful response
+      console.log('Order placed successfully!');
+    } else {
+      // Handle server-side errors
+      console.error('Failed to place order:', response.statusText);
+    }
+  } catch (error) {
+    // Handle network or other errors
+    console.error('Network error:', error);
+  }
 };
 
 const handleAddressChange = async (e: ChangeEvent<HTMLInputElement>,
@@ -183,15 +217,10 @@ const handleAddressChange = async (e: ChangeEvent<HTMLInputElement>,
     const expressPrice = regularPrice * 1.2; // Express is 20% more expensive
     const ecoPrice = regularPrice * 0.8; // Eco is 20% cheaper
 
-   const finalPrice =
+   formData.chosenShippingPrice =
     formData.deliveryMethod === 'regular' ? parseFloat(regularPrice.toFixed(2)) :
     formData.deliveryMethod === 'express' ? parseFloat(expressPrice.toFixed(2)) :
     parseFloat(ecoPrice.toFixed(2));
-    // Update the shipping prices in formData
-    setFormData((prevData) => ({
-  ...prevData,
-  chosenShippingPrice: finalPrice // Directly specify the property name
-}));
   };
 
  // const handleBlur = (setSuggestions: React.Dispatch<React.SetStateAction<Suggestion[]>>) => {
@@ -206,18 +235,14 @@ const handleAddressChange = async (e: ChangeEvent<HTMLInputElement>,
       day: 'numeric'
     });
   };
-const updateDeliveryDates = () => {
-  const date =   formData.deliveryMethod === 'regular' ? calculateDeliveryDate(5) :
-    formData.deliveryMethod === 'express' ? calculateDeliveryDate(7) :
+const updateDeliveryDates =  () => {
+  formData.chosenDeliveryDate =   formData.deliveryMethod === 'regular' ? calculateDeliveryDate(5) :
+    formData.deliveryMethod === 'express' ? calculateDeliveryDate(2) :
     calculateDeliveryDate(8);
-  setFormData((prevData) => ({
-      ...prevData,
-      chosenDeliveryDate: date
-    }));
   };
 
   // Calculate the distance using OpenRouteService API
-  const calculateDistance = () => {
+  const calculateDistance = async() => {
     if (formData.senderAddressCoords && formData.recipientAddressCoords) {
       const apiKey = '5b3ce3597851110001cf6248f835839e4a72421881fa97ad83367c9d'; // Your OpenRouteService API Key
       const url = `https://api.openrouteservice.org/v2/directions/driving-car/geojson`;
@@ -322,7 +347,7 @@ const updateDeliveryDates = () => {
             </div>
         )}
             <TextInput
-              label="Recipient Phone (9 digits)"
+              label="Recipient Phone (10 digits)"
               required
               value={formData.recipientPhone.toString()}
               onChange={(e) => handleInputChange('recipientPhone', Number(e.currentTarget.value))}
@@ -374,7 +399,7 @@ const updateDeliveryDates = () => {
               onChange={(e) => handleInputChange('specialInstructions', e.currentTarget.value)}
             />
             <Group justify="right" mt="md">
-              <Button type="submit">Place Order</Button>
+              <Button onClick={handleSubmit} type="submit">Place Order</Button>
             </Group>
           </Stack>
         </form>
