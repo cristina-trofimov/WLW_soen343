@@ -41,9 +41,14 @@ class OrderDetails(db.Model):
     __tablename__ = 'orderDetails'
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     orderId = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
-    sourceAddress = db.Column(db.String(255), nullable=False)
-    departureAddress = db.Column(db.String(255), nullable=False)
-    scheduledArrivalTime = db.Column(db.DateTime, nullable=True)
+    senderName = db.Column(db.String(100), nullable=False)
+    senderAddress = db.Column(db.String(255), nullable=False)
+    recipientName = db.Column(db.String(100), nullable=False)
+    recipientAddress = db.Column(db.String(255), nullable=False)
+    recipientPhone = db.Column(db.String(20), nullable=False)
+    chosenDeliveryDate = db.Column(db.DateTime, nullable=True)
     actualArrivalTime = db.Column(db.DateTime, nullable=True)
-    deliveryType = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
+    deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
+    specialInstructions = db.Column(db.String(500), nullable=True)
+    distance = db.Column(db.Float, nullable=True)
 

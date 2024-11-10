@@ -1,5 +1,6 @@
 import './OrderPage.css';
 import {useState, ChangeEvent} from 'react';
+import axiosClient from "../axiosClient"
 import axios from 'axios';
 import {
   Button,
@@ -108,13 +109,9 @@ const OrderPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch('/submit-order', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData), // sending formData as JSON
-      });
-
-      if (response.ok) {
+      const response = await axiosClient.post('/create_order', formData);
+  
+      if (response.status === 200) {
         // Handle successful response
         console.log('Order placed successfully!');
       } else {
@@ -365,7 +362,7 @@ const OrderPage: React.FC = () => {
                   data={[
                     {value: 'standard', label: 'Standard'},
                     {value: 'express', label: 'Express'},
-                    {value: 'overnight', label: 'Overnight'},
+                    {value: 'eco', label: 'Eco'},
                   ]}
                   value={formData.deliveryMethod}
                   onChange={(value) => handleInputChange('deliveryMethod', value || '')}
