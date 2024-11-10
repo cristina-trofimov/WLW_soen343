@@ -13,6 +13,7 @@ import OrderPage from './pages/Orderpage.tsx';
 import PaymentPage from './pages/PaymentPage.tsx';
 import ChatbotPopup from './components/ChatbotPopup.tsx';
 import OrderingPage from './interface/OrderingPage.tsx';
+import ConfirmationPage from './pages/ConfirmationPage.tsx';
 
 
 const router = createBrowserRouter([
@@ -37,19 +38,19 @@ const router = createBrowserRouter([
         element: <QuotationPage />,
 
       },
-        {
-        path: "order",
-        element: <OrderPage />,
+      //   {
+      //   path: "order",
+      //   element: <OrderPage />,
 
-      },
+      // },
       {
-        path: "order2",
+        path: "order",
         element: <OrderingPage />,
         children: [
           { path: "", element: <Navigate to="place" replace /> },
           { path: "place", element: <OrderPage /> },
           { path: "payment", element: <PaymentPage /> },
-          // { path: "confirmation", element: <ConfirmationPage /> },
+          { path: "review", element: <ConfirmationPage /> },
         ]
       }
       ,

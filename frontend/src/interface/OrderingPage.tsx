@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation, Link } from "react-router-dom";
-import { Box, Timeline } from "@mantine/core";
+import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
+import { Box, Button, Timeline } from "@mantine/core";
+
+const payment = () => {
+    console.log("submitted")
+    const navigate = useNavigate();
+    navigate(("/order/payment"))
+  }
 
 const OrderingPage = () => {
   const location = useLocation();
   const timelineData: { [key: string]: { title: string }[] } = {
-    "/order2/place": [{ title: "Place Order" }],
-    "/order2/payment": [{ title: "Payment" }],
-    "/order2/confirmation": [{ title: "Confirmation" }],
+    "/order/place": [{ title: "Place Order" }],
+    "/order/payment": [{ title: "Payment" }],
+    "/order/review": [{ title: "Confirmation" }],
   };
-  const [currentTimelineData, setCurrentTimelineData] = useState( timelineData["/order2/place"] );
+  const [currentTimelineData, setCurrentTimelineData] = useState( timelineData["/order/place"] );
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -22,7 +28,7 @@ const OrderingPage = () => {
 
   return (
     <Box style={{ display: "flex", height: "100vh" }}>
-      <Box style={{ width: "33%", padding: "20px" }}>
+      <Box style={{ width: "20%", padding: "20px" }}>
         <Timeline active={activeIndex} bulletSize={24} lineWidth={2} align="right" >
           {Object.entries(timelineData).map(([path, items], index) => (
             <Timeline.Item
@@ -44,9 +50,10 @@ const OrderingPage = () => {
             <li>
               <Link to="payment">Payment</Link>
             </li>
-            {/* <li><Link to="confirmation">Confirmation</Link></li> */}
+            <li><Link to="review">Confirmation</Link></li>
           </ul>
         </nav>
+        <Button onClick={payment}>Place Order</Button>
       </Box>
       <Box style={{ flexGrow: 1, padding: "20px" }}>
         <Outlet />

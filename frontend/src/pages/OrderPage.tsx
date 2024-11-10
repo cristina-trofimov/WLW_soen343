@@ -12,6 +12,7 @@ import {
   NumberInput,
   Select
 } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 type Suggestion = {
   display_name: string;
@@ -116,6 +117,8 @@ const OrderPage = () => {
       if (response.ok) {
         // Handle successful response
         console.log('Order placed successfully!');
+        useNavigate()("/payment")
+        // <Link to="payment">Payment</Link>
       } else {
         // Handle server-side errors
         console.error('Failed to place order:', response.statusText);

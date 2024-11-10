@@ -157,7 +157,7 @@ const PaymentPage = () => {
               type="submit"
               fullWidth
               mt="md"
-              onClick={() => navigate("/order2/payment")}
+              onClick={() => navigate("/order/payment")}
             >
               Pay Now
             </Button>
