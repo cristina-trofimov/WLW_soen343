@@ -7,14 +7,10 @@ import {
     Paper,
     Stack,
     TextInput,
-    Textarea,
     Title,
     Group,
-    NumberInput,
-    Select,
-    Alert
+    NumberInput
 } from '@mantine/core';
-import {DatePickerInput} from '@mantine/dates';
 
 type Suggestion = {
     display_name: string;

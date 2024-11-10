@@ -11,10 +11,8 @@ import {
   Title,
   Group,
   NumberInput,
-  Select,
-  Alert
+  Select
 } from '@mantine/core';
-import {DatePickerInput} from '@mantine/dates';
 
 type Suggestion = {
   display_name: string;
