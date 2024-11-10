@@ -1,5 +1,8 @@
 import './Homepage.css';
 
+import TrackDelivery from '../components/TrackDelivery';
+
+
 const HomePage = () => {
     return (
             <div id={"trackingPackage"}>
@@ -19,6 +22,12 @@ const HomePage = () => {
                 </div>
                 <p id={"importantInfo"}>WORLDWIDE : KEEPING YOUR WORLD CONNECTED</p>
             </div>
+
+        <div>
+            Welcome to HomePage
+            <TrackDelivery />
+        </div>
+
     )
 }
 
