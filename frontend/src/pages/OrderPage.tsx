@@ -353,7 +353,6 @@ const updateDeliveryDates =  () => {
               onChange={(e) => handleInputChange('recipientPhone', Number(e.currentTarget.value))}
               error={phoneError}
             />
-            {phoneError && <Alert color="red">{phoneError}</Alert>}
             <NumberInput
               label="Package Weight (kg)"
               required
@@ -399,7 +398,7 @@ const updateDeliveryDates =  () => {
               onChange={(e) => handleInputChange('specialInstructions', e.currentTarget.value)}
             />
             <Group justify="right" mt="md">
-              <Button onClick={handleSubmit} type="submit">Place Order</Button>
+              <Button type="submit">Place Order</Button>
             </Group>
           </Stack>
         </form>
