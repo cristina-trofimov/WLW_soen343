@@ -1,4 +1,3 @@
-import './OrderPage.css';
 import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 

@@ -12,9 +12,6 @@ const HomePage = () => {
 
     return (
         // <div id={"trackingPackage"}>
-        //     <Alert color="red" variant='filled' title="{loginError}">
-        //             hcdjnck
-        //         </Alert>
         //     <div className={"grid-container"}>
         //         <div className={"column"} id={"column-left"}>
         //             <p id={"title"}>TRACK YOUR PACKAGE</p>
