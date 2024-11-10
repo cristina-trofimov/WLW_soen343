@@ -65,6 +65,7 @@ const OrderPage = () => {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [senderAddressError, setSenderAddressError] = useState<string | null>(null);
   const [recipientAddressError, setRecipientAddressError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Main form data change handler
   const handleInputChange = (field: keyof FormData, value: any) => {
@@ -117,7 +118,7 @@ const OrderPage = () => {
       if (response.ok) {
         // Handle successful response
         console.log('Order placed successfully!');
-        useNavigate()("/payment")
+        navigate(("/order/payment"))
         // <Link to="payment">Payment</Link>
       } else {
         // Handle server-side errors
