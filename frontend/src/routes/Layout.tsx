@@ -15,8 +15,8 @@ const Layout = () => {
                 <a onClick={() => navigate("/home")}>
                     <div className={classes.logo}><Image src={"./WLW_logo.png"} h={"80px"}/></div>
                 </a>
-                <button className={classes.headerButton} onClick={() => navigate("/")}>SHIPPING</button>
-                <button className={classes.headerButton} onClick={() => navigate("/quote")}>BUSINESS SERVICE</button>
+                <button className={classes.headerButton} onClick={() => navigate("/order")}>SHIPPING</button>
+                <button className={classes.headerButton} onClick={() => navigate("/quote")}>QUOTATION</button>
                 <button className={classes.headerButton} onClick={() => navigate("/")}>TRACKING</button>
                 {sessionStorage.getItem("isLogged") === "true" ? <UserDropdown /> : (<LoginRegister />) }
             </div>
