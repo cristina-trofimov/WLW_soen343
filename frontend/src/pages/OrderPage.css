@@ -1,20 +1,23 @@
 .suggestion-container {
-  max-height: 150px;  /* Adjust the height as needed */
-  overflow-y: auto;   /* Enables scrolling if there are many suggestions */
-  border: 1px solid #ccc;  /* Adds a border for clarity */
-  background-color: white;  /* Ensures the suggestions have a white background */
-  position: absolute;
-  width: 100%;
-  z-index: 10;
+    position: absolute;
+    border: 1px solid #ccc;
+    background-color: white;
+    width: 100%;
+    max-height: 120px;
+    overflow-y: auto;
+    z-index: 1;
 }
-
+#sender-suggestion{
+    margin-top: 138px;
+}
+#recipient-suggestion{
+    margin-top: 291px;
+}
 .suggestion-item {
-  padding: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  border-bottom: 1px solid #ddd;
+    padding: 8px;
+    cursor: pointer;
 }
 
 .suggestion-item:hover {
-  background-color: #f0f0f0;  /* Highlight the item when hovered */
+    background-color: #f0f0f0;
 }
