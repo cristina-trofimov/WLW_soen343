@@ -161,3 +161,58 @@ def get_all_orders():
         return jsonify(orders_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@order.route('/get_current_user_orders', methods=['GET'])
+def get_current_user_orders():
+    try:
+        # Get current user ID (assumes function get_current_user() is defined in the same module)
+        customer_id = get_current_user()
+        if not customer_id:
+            return jsonify({"error": "Unauthorized. Please log in."}), 401
+
+        # Query all orders of the current user
+        orders = Order.query.filter_by(customerId=customer_id).all()
+
+        # If no orders are found, return a message
+        if not orders:
+            return jsonify({"message": "You have no orders."}), 200
+
+        # Serialize the data to JSON format
+        orders_list = []
+        for order in orders:
+            # Get the related package
+            package = Package.query.get(order.packageId)
+            
+            # Get the related order details (could be multiple)
+            order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            
+            # Append the order data, along with package and order details
+            orders_list.append({
+                'trackingNumber': order.trackingNumber,
+                'price': order.price,
+                'package': {
+                    'id': package.id,
+                    'weight': package.weight,
+                    'length': package.length,
+                    'width': package.width,
+                    'height': package.height,
+                } if package else None,
+                'orderDetails': [{
+                    'id': detail.id,
+                    'senderName': detail.senderName,
+                    'senderAddress': detail.senderAddress,
+                    'recipientName': detail.recipientName,
+                    'recipientAddress': detail.recipientAddress,
+                    'recipientPhone': detail.recipientPhone,
+                    'chosenDeliveryDate': detail.chosenDeliveryDate,
+                    'deliveryMethod': detail.deliveryMethod,
+                    'specialInstructions': detail.specialInstructions,
+                    'distance': detail.distance,
+                } for detail in order_details],
+                'customerId': order.customerId
+            })
+        
+        return jsonify(orders_list), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
