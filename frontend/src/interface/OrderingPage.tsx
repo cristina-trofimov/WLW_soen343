@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
-import { Box, Button, Timeline } from "@mantine/core";
+import { Outlet, useLocation } from "react-router-dom";
+import { Box, Timeline } from "@mantine/core";
 
 const OrderingPage = () => {
   const location = useLocation();
@@ -20,14 +20,8 @@ const OrderingPage = () => {
     setActiveIndex(index !== -1 ? index : 0);
   }, [location]);
 
-//   const navigate = useNavigate();
-//   const payment = () => {
-//     console.log("submitted")
-//     navigate(("/order/payment"))
-//   }
-
   return (
-    <Box style={{ display: "flex", height: "100vh" }}>
+    <Box style={{ display: "flex" }}>
       <Box style={{ width: "20%", padding: "20px" }}>
         <Timeline active={activeIndex} bulletSize={24} lineWidth={2} align="right" >
           {Object.entries(timelineData).map(([path, items], index) => (
@@ -42,18 +36,6 @@ const OrderingPage = () => {
             />
           ))}
         </Timeline>
-        {/* <nav>
-          <ul>
-            <li>
-              <Link to="place">Place Order</Link>
-            </li>
-            <li>
-              <Link to="payment">Payment</Link>
-            </li>
-            <li><Link to="review">Confirmation</Link></li>
-          </ul>
-        </nav>
-        <Button onClick={payment}>Place Order</Button> */}
       </Box>
       <Box style={{ flexGrow: 1, padding: "20px" }}>
         <Outlet />

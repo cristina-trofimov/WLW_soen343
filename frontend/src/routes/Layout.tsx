@@ -15,10 +15,13 @@ const Layout = () => {
                 <a onClick={() => navigate("/home")}>
                     <div className={classes.logo}><Image src={"/WLW_logo.png"} h={"80px"}/></div>
                 </a>
-                <button className={classes.headerButton} onClick={() => navigate("/order")}>SHIPPING</button>
                 <button className={classes.headerButton} onClick={() => navigate("/quote")}>QUOTATION</button>
                 <button className={classes.headerButton} onClick={() => navigate("/")}>TRACKING</button>
-                {sessionStorage.getItem("isLogged") === "true" ? <UserDropdown /> : (<LoginRegister />) }
+                {sessionStorage.getItem("isLogged") === "false" ? ( <LoginRegister /> ) : 
+                    (<>
+                        <button className={classes.headerButton} onClick={() => navigate("/order")}>SHIPPING</button>
+                        <UserDropdown />
+                    </>)}
             </div>
             <main className={classes.mainContent}><Outlet/></main>
         </div>

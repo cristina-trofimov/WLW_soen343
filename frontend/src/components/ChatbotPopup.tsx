@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Popover, Text, TextInput, Stack } from '@mantine/core';
+import { Button, Popover, Text, TextInput, Stack, Image } from '@mantine/core';
 
 const ChatbotPopup = () => {
     const [opened, setOpened] = useState(false);
@@ -22,11 +22,13 @@ const ChatbotPopup = () => {
           shadow="md"
         >
           <Popover.Target>
-            <Button onClick={() => setOpened((o) => !o)}>
-              {opened ? 'Close Chat' : 'Ask WLW'}
-            </Button>
+          <Button onClick={() => setOpened((o) => !o)}>
+            {opened ? 'Close Chat' : (
+              <><Image src="/WLW_logo.png" height={"30px"} radius={"150%"} style={{ marginRight: '8px' }} />Ask WLW</>
+            )}
+          </Button>
           </Popover.Target>
-  
+          {/* <Image src={"/WLW_logo.png"} h={"80px"}/> */}
           <Popover.Dropdown>
             <Stack gap="xs">
               <Text size="sm" fw={500}>Chatbot</Text>

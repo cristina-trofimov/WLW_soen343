@@ -145,7 +145,6 @@ const PaymentPage = () => {
                 maxLength={4}
               />
             </Group>
-            {/* TODO: should receive the total */}
             <NumberInput
               label="Amount"
               required
