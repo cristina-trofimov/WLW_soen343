@@ -13,6 +13,7 @@ import {
   Select
 } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import './OrderPage.css';
 
 type Suggestion = {
   display_name: string;
