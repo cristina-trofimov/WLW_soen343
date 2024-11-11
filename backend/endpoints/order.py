@@ -115,3 +115,49 @@ def createOrder():
         # Use current_app.logger to log errors
         current_app.logger.error(f"Error creating order: {str(e)}")
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+
+@order.route('/get_all_orders', methods=['GET'])
+def get_all_orders():
+    try:
+        # Query all orders, along with related OrderDetails and Package
+        orders = Order.query.all()
+
+        # Serialize the data to JSON format
+        orders_list = []
+        for order in orders:
+            # Get the related package
+            package = Package.query.get(order.packageId)
+            
+            # Get the related order details (could be multiple)
+            order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            
+            # Append the order data, along with package and order details
+            orders_list.append({
+                'trackingNumber': order.trackingNumber,
+                'price': order.price,
+                'package': {
+                    'id': package.id,
+                    'weight': package.weight,
+                    'length': package.length,
+                    'width': package.width,
+                    'height': package.height,
+                } if package else None,
+                'orderDetails': [{
+                    'id': detail.id,
+                    'senderName': detail.senderName,
+                    'senderAddress': detail.senderAddress,
+                    'recipientName': detail.recipientName,
+                    'recipientAddress': detail.recipientAddress,
+                    'recipientPhone': detail.recipientPhone,
+                    'chosenDeliveryDate': detail.chosenDeliveryDate,
+                    'deliveryMethod': detail.deliveryMethod,
+                    'specialInstructions': detail.specialInstructions,
+                    'distance': detail.distance,
+                } for detail in order_details],
+                'customerId': order.customerId
+            })
+        
+        return jsonify(orders_list), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

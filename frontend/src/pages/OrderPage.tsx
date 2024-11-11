@@ -114,7 +114,9 @@ const OrderPage: React.FC = () => {
       console.log("Form data before posting:", dataToSubmit);
       const response = await axiosClient.post('/create_order', dataToSubmit);
   
-      if (response.status === 200) {
+      console.log("response status:", response.status);
+
+      if (response.status === 201) {
         // Handle successful response
         console.log('Order placed successfully!');
       } else {
