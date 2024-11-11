@@ -109,7 +109,10 @@ const OrderPage: React.FC = () => {
     }
 
     try {
-      const response = await axiosClient.post('/create_order', formData);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Small delay
+      const dataToSubmit = formData;
+      console.log("Form data before posting:", dataToSubmit);
+      const response = await axiosClient.post('/create_order', dataToSubmit);
   
       if (response.status === 200) {
         // Handle successful response

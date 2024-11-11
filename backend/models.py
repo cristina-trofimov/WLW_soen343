@@ -33,7 +33,7 @@ class Order(db.Model):
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
 
 class DeliveryTypeEnum(Enum):
-    REGULAR = "regular"
+    STANDARD = "standard"
     EXPRESS = "express"
     ECO = "eco"
 
