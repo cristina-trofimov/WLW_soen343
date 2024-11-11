@@ -1,7 +1,7 @@
 # order.py
 
 from datetime import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum
 import json
 from endpoints.auth import get_current_user
@@ -37,7 +37,7 @@ def createOrder():
             return jsonify({"error": "Missing required fields"}), 400
         
         # Normalize and validate deliveryMethod
-        delivery_method = delivery_method.lower().capitalize()
+        delivery_method = delivery_method.strip().lower()
         if delivery_method not in [e.value for e in DeliveryTypeEnum.__members__.values()]:
             return jsonify({"error": f"Invalid delivery method. Must be one of: {', '.join([e.value for e in DeliveryTypeEnum])}"}), 400
 
@@ -73,11 +73,13 @@ def createOrder():
             recipientName=recipient_name,
             recipientAddress=recipient_address,
             recipientPhone=recipient_phone,
-            chosenDeliveryDate=datetime.fromisoformat(chosen_delivery_date) if chosen_delivery_date else None,
+            # Convert chosen_delivery_date to a datetime object
+            chosenDeliveryDate=chosen_delivery_date,
             deliveryMethod=delivery_method,
             specialInstructions=special_instructions,
-            distance=float(distance) if distance else None
+            distance=distance
         )
+
         db.session.add(new_order_details)
         db.session.commit()
 
@@ -96,7 +98,7 @@ def createOrder():
                 "senderName": new_order_details.senderName,
                 "recipientName": new_order_details.recipientName,
                 "deliveryMethod": new_order_details.deliveryMethod,
-                "chosenDeliveryDate": new_order_details.chosenDeliveryDate.isoformat() if new_order_details.chosenDeliveryDate else None,
+                "chosenDeliveryDate": new_order_details.chosenDeliveryDate,
                 "specialInstructions": new_order_details.specialInstructions,
                 "distance": new_order_details.distance
             }
@@ -105,9 +107,11 @@ def createOrder():
         return jsonify(response), 201
 
     except KeyError as e:
-        order.logger.error(f"Missing key error: {str(e)}")
+        # Use current_app.logger to log errors
+        current_app.logger.error(f"Missing key error: {str(e)}")
         return jsonify({"error": f"Missing required field: {str(e)}"}), 400
     except Exception as e:
         db.session.rollback()
-        order.logger.error(f"Error creating order: {str(e)}")
+        # Use current_app.logger to log errors
+        current_app.logger.error(f"Error creating order: {str(e)}")
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500

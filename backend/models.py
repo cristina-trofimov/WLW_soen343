@@ -27,15 +27,15 @@ class Package(db.Model):
 class Order(db.Model):
     __tablename__ = 'orders'
     trackingNumber = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Float, nullable=True)
     packageId = db.Column(db.String(32), db.ForeignKey('packages.id'), nullable=False, index=True)
     orderDetailsId = db.relationship('OrderDetails', backref='order', lazy=True)
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
 
 class DeliveryTypeEnum(Enum):
-    REGULAR = "Regular"
-    EXPRESS = "Express"
-    ECO = "Eco"
+    REGULAR = "regular"
+    EXPRESS = "express"
+    ECO = "eco"
 
 class OrderDetails(db.Model):
     __tablename__ = 'orderDetails'
@@ -45,10 +45,9 @@ class OrderDetails(db.Model):
     senderAddress = db.Column(db.String(255), nullable=False)
     recipientName = db.Column(db.String(100), nullable=False)
     recipientAddress = db.Column(db.String(255), nullable=False)
-    recipientPhone = db.Column(db.String(20), nullable=False)
-    chosenDeliveryDate = db.Column(db.DateTime, nullable=True)
-    actualArrivalTime = db.Column(db.DateTime, nullable=True)
+    recipientPhone = db.Column(db.Integer, nullable=False)
+    chosenDeliveryDate = db.Column(db.String(100), nullable=True)
     deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
     specialInstructions = db.Column(db.String(500), nullable=True)
-    distance = db.Column(db.Float, nullable=True)
+    distance = db.Column(db.String(50), nullable=True)
 
