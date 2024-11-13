@@ -7,9 +7,12 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import Layout from './routes/Layout'
 import ErrorPage from './pages/ErrorPage'
 import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
 import QuotationPage from "./pages/QuotationPage.tsx";
-import OrderPage from './pages/Orderpage.tsx';
+import PaymentPage from './pages/PaymentPage.tsx';
+import ChatbotPopup from './components/ChatbotPopup.tsx';
+import OrderingPage from './interface/OrderingPage.tsx';
+import ConfirmationPage from './pages/ConfirmationPage.tsx';
+import OrderPage from './pages/OrderPage.tsx';
 
 
 const router = createBrowserRouter([
@@ -34,15 +37,15 @@ const router = createBrowserRouter([
         element: <QuotationPage />,
 
       },
-        {
-        path: "order",
-        element: <OrderPage />,
-
-      },
       {
-        path: "/login",
-        element: <LoginPage />,
-        errorElement: <ErrorPage />
+        path: "order",
+        element: <OrderingPage />,
+        children: [
+          { path: "", element: <Navigate to="place" replace /> },
+          { path: "place", element: <OrderPage /> },
+          { path: "payment", element: <PaymentPage /> },
+          { path: "review", element: <ConfirmationPage /> },
+        ]
       }
     ]
   },
@@ -70,8 +73,9 @@ const theme = createTheme({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme='light'>
       <RouterProvider router={router} />
+      <ChatbotPopup />
     </MantineProvider>
 
   </StrictMode>,
