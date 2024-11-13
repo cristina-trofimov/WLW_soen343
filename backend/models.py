@@ -27,7 +27,7 @@ class Package(db.Model):
 class Order(db.Model):
     __tablename__ = 'orders'
     trackingNumber = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    price = db.Column(db.Float, nullable=True)
+    price = db.Column(db.Float, nullable=False)
     packageId = db.Column(db.String(32), db.ForeignKey('packages.id'), nullable=False, index=True)
     orderDetailsId = db.relationship('OrderDetails', backref='order', lazy=True)
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
