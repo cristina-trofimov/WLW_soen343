@@ -9,7 +9,8 @@ import ErrorPage from './pages/ErrorPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import QuotationPage from "./pages/QuotationPage.tsx";
-import OrderPage from './pages/Orderpage.tsx';
+import OrderPage from './pages/OrderPage.tsx';
+import MyOrdersPage from './pages/MyOrdersPage.tsx';
 
 
 const router = createBrowserRouter([
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
         path: "/login",
         element: <LoginPage />,
         errorElement: <ErrorPage />
+      },
+      {
+        path: "/my-orders",
+        element: <MyOrdersPage />,
       }
     ]
   },

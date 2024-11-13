@@ -16,6 +16,7 @@ const Layout = () => {
                 <button className={classes.headerButton} onClick={() => navigate("/order")}>SHIPPING</button>
                 <button className={classes.headerButton} onClick={() => navigate("/quote")}>QUOTATION</button>
                 <button className={classes.headerButton} onClick={() => navigate("/")}>TRACKING</button>
+                <button className={classes.headerButton} onClick={() => navigate("/my-orders")}>MY ORDERS</button>
                 <button className={classes.loginButton} onClick={() => navigate("/login")}>Log In</button>
             </div>
             <main className={classes.mainContent}><Outlet/></main>
