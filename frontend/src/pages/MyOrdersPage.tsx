@@ -1,10 +1,10 @@
 import './MyOrdersPage.css';
 import axiosClient from "../axiosClient";
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Card, Container, Title } from '@mantine/core';
 
 // Define the types for the order data
-interface Package {
+interface Package { // might not need this
     id: number;
     weight: number;
     length: number;
@@ -28,8 +28,8 @@ interface OrderDetail {
 interface Order {
     trackingNumber: string;
     price: number;
-    package: Package | null;
-    orderDetails: OrderDetail[];
+    package: Package;
+    orderDetails: OrderDetail;
     customerId: number;
 }
 
@@ -39,27 +39,85 @@ const MyOrdersPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await axiosClient.get('/get_current_user_orders');
-                if (response.status === 200){
-                    // success
-                    console.log('Orders retrieved successfully!');
-                }
-                else{
-                    // error
-                    console.log('Failed to retrieve orders: ', response.statusText);
-                }
-                setOrders(response.data);
-                setError(null);
-            } catch (err: any) {
-                setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
-            } finally {
-                setLoading(false);
-            }
-        };
+        // const fetchOrders = async () => {
+        //     try {
+        //         const response = await axiosClient.get('/get_current_user_orders');
+        //         if (response.status === 200){
+        //             // success
+        //             console.log('Orders retrieved successfully!');
+        //         }
+        //         else{
+        //             // error
+        //             console.log('Failed to retrieve orders: ', response.statusText);
+        //         }
+        //         setOrders(response.data);
+        //         setError(null);
+        //     } catch (err: any) {
+        //         setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
+        //     } finally {
+        //         setLoading(false);
+        //     }
+        // };
 
-        fetchOrders();
+        // fetchOrders();
+
+        // Mock data for testing
+        const mockOrders: Order[] = [
+            {
+                trackingNumber: '123456789',
+                price: 100.0,
+                package: {
+                    id: 1,
+                    weight: 5.0,
+                    length: 30.0,
+                    width: 20.0,
+                    height: 15.0,
+                },
+                orderDetails: {
+                        id: 1,
+                        senderName: 'John Doe',
+                        senderAddress: '123 Main St, Cityville',
+                        recipientName: 'Jane Smith',
+                        recipientAddress: '456 Elm St, Townsville',
+                        recipientPhone: '555-1234',
+                        chosenDeliveryDate: '2024-11-15',
+                        deliveryMethod: 'Standard Shipping',
+                        specialInstructions: 'Leave at the front door',
+                        distance: 120.5,
+                },
+                customerId: 42,
+            },
+            {
+                trackingNumber: '987654321',
+                price: 250.0,
+                package: {
+                    id: 2,
+                    weight: 10.0,
+                    length: 50.0,
+                    width: 40.0,
+                    height: 25.0,
+                },
+                orderDetails: {
+                    id: 1,
+                    senderName: 'John Doe',
+                    senderAddress: '123 Main St, Cityville',
+                    recipientName: 'Jane Smith',
+                    recipientAddress: '456 Elm St, Townsville',
+                    recipientPhone: '555-1234',
+                    chosenDeliveryDate: '2024-11-15',
+                    deliveryMethod: 'Standard Shipping',
+                    specialInstructions: 'Leave at the front door',
+                    distance: 120.5,
+            },
+                customerId: 42,
+            },
+        ];
+
+        // Simulate API response
+        setTimeout(() => {
+            setOrders(mockOrders);
+            setLoading(false);
+        }, 100);
     }, []);
 
     if (loading) {
@@ -71,43 +129,54 @@ const MyOrdersPage: React.FC = () => {
     }
 
     return (
-        <div className="orders-container">
-            <h1>My Orders</h1>
+        <Container size="sm">
+            <Title order={1} ta="center" mt="md" mb="xl">
+                My Orders
+            </Title>
             {orders.length === 0 ? (
-                <p>You have no orders.</p>
+                <p className="no-orders">You have no orders.</p>
             ) : (
                 orders.map((order) => (
-                    <div key={order.trackingNumber} className="order-card">
-                        <h2>Tracking Number: {order.trackingNumber}</h2>
-                        <p>Price: ${order.price}</p>
-                        {order.package && (
-                            <div className="package-info">
-                                <h3>Package Details:</h3>
-                                <p>Weight: {order.package.weight} kg</p>
-                                <p>Dimensions: {order.package.length} x {order.package.width} x {order.package.height} cm</p>
+                    <Card 
+                        key={order.trackingNumber} 
+                        className="order-card" 
+                        shadow="lg" 
+                        padding="lg" 
+                        radius="md" 
+                        withBorder 
+                        mb="md">
+                            
+                        <h2 className="tracking-number">
+                            Tracking Number: {order.trackingNumber}
+                        </h2>
+
+                        {order.orderDetails && (
+                            <div className="order-details">
+                                {/* Price and Delivery Date */}
+                                <div className="price-delivery">
+                                    <p><strong>Price:</strong> ${order.price}</p>
+                                    <p><strong>Delivery Expected By:</strong> {order.orderDetails.chosenDeliveryDate}</p>
+                                </div>
+
+                                {/* Sender and Recipient Info in two columns */}
+                                <div className="order-info-container">
+                                    <div className="sender-info">
+                                        <p><strong>Sender:</strong> {order.orderDetails.senderName}</p>
+                                        <p><strong>Sender Address:</strong> {order.orderDetails.senderAddress}</p>
+                                    </div>
+
+                                    <div className="recipient-info">
+                                        <p><strong>Recipient:</strong> {order.orderDetails.recipientName}</p>
+                                        <p><strong>Recipient Address:</strong> {order.orderDetails.recipientAddress}</p>
+                                    </div>
+                                </div>
                             </div>
                         )}
-                        <div className="order-details">
-                            <h3>Order Details:</h3>
-                            {order.orderDetails.map((detail) => (
-                                <div key={detail.id} className="order-detail-card">
-                                    <p>Sender: {detail.senderName}</p>
-                                    <p>Sender Address: {detail.senderAddress}</p>
-                                    <p>Recipient: {detail.recipientName}</p>
-                                    <p>Recipient Address: {detail.recipientAddress}</p>
-                                    <p>Recipient Phone: {detail.recipientPhone}</p>
-                                    <p>Chosen Delivery Date: {detail.chosenDeliveryDate}</p>
-                                    <p>Delivery Method: {detail.deliveryMethod}</p>
-                                    <p>Special Instructions: {detail.specialInstructions}</p>
-                                    <p>Distance: {detail.distance} km</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    </Card>
                 ))
             )}
-        </div>
-    );
+        </Container>
+    ); 
 };
 
 export default MyOrdersPage;
