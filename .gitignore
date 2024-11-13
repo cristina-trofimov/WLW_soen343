@@ -1,4 +1,5 @@
 /venv
 /backend/__pycache__
-/backend/db.sqlite
 *.pyc
+__pycache__
+backend/instance/db.sqlite
