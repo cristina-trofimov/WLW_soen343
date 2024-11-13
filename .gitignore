@@ -2,4 +2,4 @@
 /backend/__pycache__
 *.pyc
 __pycache__
-backend/instance/db.sqlite
+/backend/instance/db.sqlite
