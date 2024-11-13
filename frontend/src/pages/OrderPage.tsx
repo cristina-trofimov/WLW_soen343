@@ -1,4 +1,6 @@
-import { useState, ChangeEvent } from 'react';
+import './OrderPage.css';
+import {useState, ChangeEvent} from 'react';
+import axiosClient from "../axiosClient"
 import axios from 'axios';
 import {
   Button,
@@ -110,13 +112,14 @@ const OrderPage = () => {
     }
 
     try {
-      const response = await fetch('/submit-order', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData), // sending formData as JSON
-      });
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Small delay
+      const dataToSubmit = formData;
+      console.log("Form data before posting:", dataToSubmit);
+      const response = await axiosClient.post('/create_order', dataToSubmit);
+  
+      console.log("response status:", response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         // Handle successful response
         console.log('Order placed successfully!');
         navigate(("/order/payment"))
@@ -369,7 +372,7 @@ const OrderPage = () => {
                   data={[
                     {value: 'standard', label: 'Standard'},
                     {value: 'express', label: 'Express'},
-                    {value: 'overnight', label: 'Overnight'},
+                    {value: 'eco', label: 'Eco'},
                   ]}
                   value={formData.deliveryMethod}
                   onChange={(value) => handleInputChange('deliveryMethod', value || '')}
