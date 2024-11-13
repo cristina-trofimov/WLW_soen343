@@ -11,7 +11,7 @@ order = Blueprint('order', __name__)
 CURRENT_USER_FILE = 'current_user.json'
 
 @order.route("/create_order", methods=["POST"])
-def createOrder():
+def create_order():
     try:
         # Extract input data from the request JSON
         form_data = request.get_json()

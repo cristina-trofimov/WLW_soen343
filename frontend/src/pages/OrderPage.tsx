@@ -14,6 +14,8 @@ import {
   NumberInput,
   Select
 } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
+import './OrderPage.css';
 
 type Suggestion = {
   display_name: string;
@@ -42,7 +44,7 @@ interface FormData {
   distance: string | null;
 }
 
-const OrderPage: React.FC = () => {
+const OrderPage = () => {
   const [formData, setFormData] = useState<FormData>({
     senderName: '',
     senderAddress: '',
@@ -66,6 +68,7 @@ const OrderPage: React.FC = () => {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [senderAddressError, setSenderAddressError] = useState<string | null>(null);
   const [recipientAddressError, setRecipientAddressError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Main form data change handler
   const handleInputChange = (field: keyof FormData, value: any) => {
@@ -119,6 +122,8 @@ const OrderPage: React.FC = () => {
       if (response.status === 201) {
         // Handle successful response
         console.log('Order placed successfully!');
+        navigate(("/order/payment"))
+        // <Link to="payment">Payment</Link>
       } else {
         // Handle server-side errors
         console.error('Failed to place order:', response.statusText);
