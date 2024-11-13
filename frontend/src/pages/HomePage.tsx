@@ -5,7 +5,6 @@ import TrackDelivery from '../components/TrackDelivery';
 
 const HomePage = () => {
     return (
-
         <div id={"trackingPackage"}>
             <div className={"grid-container"}>
                 <div className={"column"} id={"column-left"}>
