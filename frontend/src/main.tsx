@@ -13,6 +13,8 @@ import ChatbotPopup from './components/ChatbotPopup.tsx';
 import OrderingPage from './interface/OrderingPage.tsx';
 import ConfirmationPage from './pages/ConfirmationPage.tsx';
 import OrderPage from './pages/OrderPage.tsx';
+import MyOrdersPage from './pages/MyOrdersPage.tsx';
+
 
 
 const router = createBrowserRouter([
@@ -46,6 +48,10 @@ const router = createBrowserRouter([
           { path: "payment", element: <PaymentPage /> },
           { path: "review", element: <ConfirmationPage /> },
         ]
+      },
+      {
+        path: "my-orders",
+        element: <MyOrdersPage />,
       }
     ]
   },
