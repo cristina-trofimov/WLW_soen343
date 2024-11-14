@@ -46,7 +46,6 @@ const MyOrdersPage: React.FC = () => {
                 if (response.status === 200){
                     // success
                     console.log('Orders retrieved successfully!');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
                     setOrders(response.data as Order[]);
                 }
                 else{
