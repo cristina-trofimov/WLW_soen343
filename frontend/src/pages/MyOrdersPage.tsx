@@ -39,86 +39,45 @@ const MyOrdersPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        // const fetchOrders = async () => {
-        //     try {
-        //         const response = await axiosClient.get('/get_current_user_orders');
-        //         if (response.status === 200){
-        //             // success
-        //             console.log('Orders retrieved successfully!');
-        //         }
-        //         else{
-        //             // error
-        //             console.log('Failed to retrieve orders: ', response.statusText);
-        //         }
-        //         setOrders(response.data);
-        //         setError(null);
-        //     } catch (err: any) {
-        //         setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
-        //     } finally {
-        //         setLoading(false);
-        //     }
-        // };
+        const fetchOrders = async () => {
+            try {
+                const response = await axiosClient.get('/get_current_user_orders');
 
-        // fetchOrders();
+                if (response.status === 200){
+                    // success
+                    console.log('Orders retrieved successfully!');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    setOrders(response.data as Order[]);
+                }
+                else{
+                    // error
+                    console.log('Failed to retrieve orders: ', response.statusText);
+                }   
+                setError(null);
+            } catch (err: any) {
+                setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        // Mock data for testing
-        const mockOrders: Order[] = [
-            {
-                trackingNumber: '123456789',
-                price: 100.0,
-                package: {
-                    id: 1,
-                    weight: 5.0,
-                    length: 30.0,
-                    width: 20.0,
-                    height: 15.0,
-                },
-                orderDetails: {
-                        id: 1,
-                        senderName: 'John Doe',
-                        senderAddress: '123 Main St, Cityville',
-                        recipientName: 'Jane Smith',
-                        recipientAddress: '456 Elm St, Townsville',
-                        recipientPhone: '555-1234',
-                        chosenDeliveryDate: '2024-11-15',
-                        deliveryMethod: 'Standard Shipping',
-                        specialInstructions: 'Leave at the front door',
-                        distance: 120.5,
-                },
-                customerId: 42,
-            },
-            {
-                trackingNumber: '987654321',
-                price: 250.0,
-                package: {
-                    id: 2,
-                    weight: 10.0,
-                    length: 50.0,
-                    width: 40.0,
-                    height: 25.0,
-                },
-                orderDetails: {
-                    id: 1,
-                    senderName: 'John Doe',
-                    senderAddress: '123 Main St, Cityville',
-                    recipientName: 'Jane Smith',
-                    recipientAddress: '456 Elm St, Townsville',
-                    recipientPhone: '555-1234',
-                    chosenDeliveryDate: '2024-11-15',
-                    deliveryMethod: 'Standard Shipping',
-                    specialInstructions: 'Leave at the front door',
-                    distance: 120.5,
-            },
-                customerId: 42,
-            },
-        ];
+        fetchOrders();
 
-        // Simulate API response
-        setTimeout(() => {
-            setOrders(mockOrders);
-            setLoading(false);
-        }, 100);
     }, []);
+
+    // Log the orders state after it has been updated
+    useEffect(() => {
+        if (orders.length > 0) {
+            console.log('Updated Orders State:', orders);
+            orders.forEach((order) => {
+                console.log('Order Details:', order.orderDetails); // Check if it's populated
+                console.log('Chosen Delivery Date:', order.orderDetails.chosenDeliveryDate);
+                console.log('Sender Name:', order.orderDetails.senderName);
+                console.log('Recipient Name:', order.orderDetails.recipientName);
+            });
+        }
+    }, [orders]);
+     // This will trigger whenever orders state changes
 
     if (loading) {
         return <div>Loading...</div>;
@@ -150,7 +109,7 @@ const MyOrdersPage: React.FC = () => {
                             Tracking Number: {order.trackingNumber}
                         </h2>
 
-                        {order.orderDetails && (
+                        {order.orderDetails && order.orderDetails && (
                             <div className="order-details">
                                 {/* Price and Delivery Date */}
                                 <div className="price-delivery">
