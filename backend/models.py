@@ -23,6 +23,8 @@ class Package(db.Model):
     width = db.Column(db.Float, nullable=False)
     height = db.Column(db.Float, nullable=False)
     orderId = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
+    # relationship to order, i think it will make it easier to query the order details
+    order = db.relationship('Order', backref='packages', lazy=True)
 
 class Order(db.Model):
     __tablename__ = 'orders'
@@ -31,19 +33,24 @@ class Order(db.Model):
     packageId = db.Column(db.String(32), db.ForeignKey('packages.id'), nullable=False, index=True)
     orderDetailsId = db.relationship('OrderDetails', backref='order', lazy=True)
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
+    # relationship to order, i think it will make it easier to query the order details
+    customer = db.relationship('Customer', backref='orders', lazy=True)
 
 class DeliveryTypeEnum(Enum):
-    REGULAR = "Regular"
-    EXPRESS = "Express"
-    ECO = "Eco"
+    STANDARD = "standard"
+    EXPRESS = "express"
+    ECO = "eco"
 
 class OrderDetails(db.Model):
     __tablename__ = 'orderDetails'
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     orderId = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
-    sourceAddress = db.Column(db.String(255), nullable=False)
-    departureAddress = db.Column(db.String(255), nullable=False)
-    scheduledArrivalTime = db.Column(db.DateTime, nullable=True)
-    actualArrivalTime = db.Column(db.DateTime, nullable=True)
-    deliveryType = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
-
+    senderName = db.Column(db.String(100), nullable=False)
+    senderAddress = db.Column(db.String(255), nullable=False)
+    recipientName = db.Column(db.String(100), nullable=False)
+    recipientAddress = db.Column(db.String(255), nullable=False)
+    recipientPhone = db.Column(db.Integer, nullable=False)
+    chosenDeliveryDate = db.Column(db.String(100), nullable=True)
+    deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
+    specialInstructions = db.Column(db.String(500), nullable=True)
+    distance = db.Column(db.String(50), nullable=True)
