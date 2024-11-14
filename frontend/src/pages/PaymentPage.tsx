@@ -10,6 +10,8 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface PaymentFormData {
@@ -20,24 +22,40 @@ interface PaymentFormData {
   amount: number;
 }
 
+interface LocationState {
+  state?: {
+    amount?: number;
+  };
+}
+
 const PaymentPage = () => {
+  const location = useLocation() as LocationState;
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState<PaymentFormData>({
     cardNumber: "",
     cardHolder: "",
     expirationDate: "",
     cvv: "",
-    amount: 0,
+    amount: location.state?.amount ?? 0, // Use state passed from OrderPage or default to 0
   });
+
+  useEffect(() => {
+    const amountFromState = location.state?.amount ?? 0; // Fallback to 0 if undefined
+    setFormData((prev) => ({
+      ...prev,
+      amount: amountFromState,
+    }));
+  }, [location.state]);
 
   const [cvvError, setCvvError] = useState<string | null>(null);
   const [cardNumError, setCardNumError] = useState<string | null>(null);
 
-  const handleInputChange = ( name: keyof PaymentFormData, value: string | number ) => {
+  const handleInputChange = (name: keyof PaymentFormData, value: string | number) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCardNumChange = ( e: React.FormEvent<HTMLInputElement>, isBlur: boolean ) => {
+  const handleCardNumChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
     let value = e.currentTarget.value.replace(/\D/g, ""); // Remove non-digit characters
 
     if (value.length > 16) {
@@ -53,7 +71,7 @@ const PaymentPage = () => {
     setFormData((prev) => ({ ...prev, cardNumber: formattedValue }));
   };
 
-  const handleExpDateChange = ( e: React.FormEvent<HTMLInputElement>, isBlur: boolean ) => {
+  const handleExpDateChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
     let value = e.currentTarget.value.replace(/[^\d/]/g, ""); // Remove non-digit and non-slash characters
 
     if (value.length > 5) {
@@ -61,7 +79,7 @@ const PaymentPage = () => {
     }
 
     if (value.length === 2 && !value.includes("/")) {
-      value += "/";
+      value += "/"; // Add slash after 2 digits
     } else if (value.length === 2 && value.includes("/")) {
       value = "0" + value; // Add leading zero if only one digit before slash
     } else if (value.length === 3 && !value.includes("/")) {
@@ -77,7 +95,7 @@ const PaymentPage = () => {
     setFormData((prev) => ({ ...prev, expirationDate: value }));
   };
 
-  const handleCvvChange = ( e: React.FormEvent<HTMLInputElement>, isBlur: boolean ) => {
+  const handleCvvChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
     const value = e.currentTarget.value;
     const numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
 
@@ -104,7 +122,7 @@ const PaymentPage = () => {
       <Title order={1} ta="center" mt="md" mb="xl">Payment Details</Title>
 
       <Paper shadow="xs" p="md">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}> {/* Use the onSubmit for form submission */}
           <Stack gap="md">
             <TextInput
               label="Card Number"
@@ -156,7 +174,6 @@ const PaymentPage = () => {
               type="submit"
               fullWidth
               mt="md"
-              onClick={() => navigate("/order/payment")}
             >
               Pay Now
             </Button>
