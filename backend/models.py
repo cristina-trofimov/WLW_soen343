@@ -24,7 +24,7 @@ class Package(db.Model):
     height = db.Column(db.Float, nullable=False)
     orderId = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
     # relationship to order, i think it will make it easier to query the order details
-    order = db.relationship('Order', backref='packages', lazy=True)
+    order = db.relationship('Order', backref='packages', lazy=True, foreign_keys=[orderId])
 
 class Order(db.Model):
     __tablename__ = 'orders'
