@@ -79,7 +79,7 @@ const PaymentPage = () => {
     }
 
     if (value.length === 2 && !value.includes("/")) {
-      value += "/"; // Add slash after 2 digits
+      value += "/";
     } else if (value.length === 2 && value.includes("/")) {
       value = "0" + value; // Add leading zero if only one digit before slash
     } else if (value.length === 3 && !value.includes("/")) {
@@ -122,7 +122,7 @@ const PaymentPage = () => {
       <Title order={1} ta="center" mt="md" mb="xl">Payment Details</Title>
 
       <Paper shadow="xs" p="md">
-        <form onSubmit={handleSubmit}> {/* Use the onSubmit for form submission */}
+        <form onSubmit={handleSubmit}>
           <Stack gap="md">
             <TextInput
               label="Card Number"
