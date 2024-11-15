@@ -7,6 +7,7 @@ from flask_session import Session
 from endpoints.auth import auth, bcrypt
 from endpoints.payment import payment_blueprint
 from endpoints.order import order
+from endpoints.tracking import tracking
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -24,6 +25,7 @@ with app.app_context():
 app.register_blueprint(auth)
 app.register_blueprint(payment_blueprint)
 app.register_blueprint(order)
+app.register_blueprint(tracking)
 
 if __name__ == "__main__":
     app.run(debug=True)

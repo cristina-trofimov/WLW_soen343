@@ -31,7 +31,8 @@ class Order(db.Model):
     trackingNumber = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     price = db.Column(db.Float, nullable=False)
     packageId = db.Column(db.String(32), db.ForeignKey('packages.id'), nullable=False, index=True)
-    orderDetailsId = db.relationship('OrderDetails', backref='order', lazy=True)
+    orderDetailsId = db.relationship('OrderDetails', backref='orders', lazy=True)
+    trackingDetailsId = db.relationship('TrackingDetails', backref='orders', lazy=True)
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
     # relationship to order, i think it will make it easier to query the order details
     customer = db.relationship('Customer', backref='orders', lazy=True)
@@ -54,3 +55,11 @@ class OrderDetails(db.Model):
     deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
     specialInstructions = db.Column(db.String(500), nullable=True)
     distance = db.Column(db.String(50), nullable=True)
+    
+   
+class TrackingDetails(db.Model):
+    __tablename__ = 'trackingDetails'
+    trackingNumber = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), primary_key=True)
+    lastRegisteredLocation = db.Column(db.String(100), nullable=False)
+    timeLastRegistered = db.Column(db.String(100), nullable=True)
+    status = db.Column(db.String(100), nullable=False)
