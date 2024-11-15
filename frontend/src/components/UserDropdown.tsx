@@ -15,6 +15,10 @@ const UserDropdown = () => {
         console.error("Logout failed:", error);
       }
     };
+
+    const goToMyOrders = () => {
+      navigate('/my-orders')
+    };
     
     return (
         <Menu trigger="click-hover" openDelay={100} closeDelay={500} shadow="md" width={200} zIndex={1600} withArrow >
@@ -23,7 +27,7 @@ const UserDropdown = () => {
           </Menu.Target>
           <Menu.Dropdown >
             <Menu.Item>Settings</Menu.Item>
-            <Menu.Item>My Orders</Menu.Item>
+            <Menu.Item onClick={goToMyOrders}>My Orders</Menu.Item>
             <Menu.Divider />
             <Menu.Item onClick={logout} >Logout</Menu.Item>
           </Menu.Dropdown>
