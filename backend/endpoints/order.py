@@ -184,8 +184,8 @@ def get_current_user_orders():
             # Get the related package
             package = Package.query.get(order.packageId)
             
-            # Get the related order details (could be multiple)
-            order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            # Get the related order details (assume there is only one related detail per order)
+            order_detail = OrderDetails.query.filter_by(orderId=order.trackingNumber).first()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -198,21 +198,22 @@ def get_current_user_orders():
                     'width': package.width,
                     'height': package.height,
                 } if package else None,
-                'orderDetails': [{
-                    'id': detail.id,
-                    'senderName': detail.senderName,
-                    'senderAddress': detail.senderAddress,
-                    'recipientName': detail.recipientName,
-                    'recipientAddress': detail.recipientAddress,
-                    'recipientPhone': detail.recipientPhone,
-                    'chosenDeliveryDate': detail.chosenDeliveryDate,
-                    'deliveryMethod': detail.deliveryMethod,
-                    'specialInstructions': detail.specialInstructions,
-                    'distance': detail.distance,
-                } for detail in order_details],
+                'orderDetails': {
+                    'id': order_detail.id,
+                    'senderName': order_detail.senderName,
+                    'senderAddress': order_detail.senderAddress,
+                    'recipientName': order_detail.recipientName,
+                    'recipientAddress': order_detail.recipientAddress,
+                    'recipientPhone': order_detail.recipientPhone,
+                    'chosenDeliveryDate': order_detail.chosenDeliveryDate,
+                    'deliveryMethod': order_detail.deliveryMethod,
+                    'specialInstructions': order_detail.specialInstructions,
+                    'distance': order_detail.distance,
+                } if order_detail else None,
                 'customerId': order.customerId
             })
         
         return jsonify(orders_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
