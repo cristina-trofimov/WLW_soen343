@@ -122,8 +122,10 @@ const OrderPage = () => {
       if (response.status === 201) {
         // Handle successful response
         console.log('Order placed successfully!');
-        navigate(("/order/payment"))
-        // <Link to="payment">Payment</Link>
+
+        // navigate to PaymentPage with the amount = calculatedAmount
+        const calculatedAmount = formData.chosenShippingPrice;
+        navigate("/order/payment", { state: { amount: calculatedAmount } });
       } else {
         // Handle server-side errors
         console.error('Failed to place order:', response.statusText);
@@ -264,7 +266,7 @@ const OrderPage = () => {
     } else {
       formData.distance = 'Invalid coordinates';
     }
-  };
+  }
 
   return (
       <Container size="sm">
