@@ -10,7 +10,7 @@ import HomePage from './pages/HomePage'
 import QuotationPage from "./pages/QuotationPage.tsx";
 import PaymentPage from './pages/PaymentPage.tsx';
 import ChatbotPopup from './components/ChatbotPopup.tsx';
-import OrderingPage from './interface/OrderingPage.tsx';
+import OrderingPage from './pages/OrderingPage.tsx';
 import ConfirmationPage from './pages/ConfirmationPage.tsx';
 import OrderPage from './pages/OrderPage.tsx';
 import MyOrdersPage from './pages/MyOrdersPage.tsx';
