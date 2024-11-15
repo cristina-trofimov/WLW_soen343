@@ -95,7 +95,7 @@ const PaymentPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Payment submitted:", formData);
-    navigate("/home");
+    navigate("/order/review");
     // Send to payment processor
   };
 
@@ -156,7 +156,7 @@ const PaymentPage = () => {
               type="submit"
               fullWidth
               mt="md"
-              onClick={() => navigate("/order/payment")}
+              onClick={() => handleSubmit}
             >
               Pay Now
             </Button>
