@@ -68,7 +68,6 @@ const OrderPage = () => {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [senderAddressError, setSenderAddressError] = useState<string | null>(null);
   const [recipientAddressError, setRecipientAddressError] = useState<string | null>(null);
-  const [orderPlaced, setOrderPlaced] = useState(false);
   const navigate = useNavigate();
 
   // Main form data change handler
@@ -123,7 +122,10 @@ const OrderPage = () => {
       if (response.status === 201) {
         // Handle successful response
         console.log('Order placed successfully!');
-        setOrderPlaced(true);
+
+        // navigate to PaymentPage with the amount = calculatedAmount
+        const calculatedAmount = formData.chosenShippingPrice;
+        navigate("/order/payment", { state: { amount: calculatedAmount } });
       } else {
         // Handle server-side errors
         console.error('Failed to place order:', response.statusText);
@@ -266,11 +268,6 @@ const OrderPage = () => {
     }
   }
 
-  const handleProceedToPayment = () => {
-    const calculatedAmount = formData.chosenShippingPrice;
-    navigate("/order/payment", { state: { amount: calculatedAmount } });
-  };
-
   return (
       <Container size="sm">
         <Title order={1} ta="center" mt="md" mb="xl">
@@ -388,12 +385,7 @@ const OrderPage = () => {
                   onChange={(e) => handleInputChange('specialInstructions', e.currentTarget.value)}
               />
               <Group justify="right" mt="md">
-                {!orderPlaced && (
-                  <Button type="submit">Place Order</Button>
-                )}
-                {orderPlaced && (
-                  <Button onClick={handleProceedToPayment}>Proceed to Payment</Button>
-                )}
+                <Button type="submit">Place Order</Button>
               </Group>
             </Stack>
           </form>
