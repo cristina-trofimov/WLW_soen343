@@ -133,7 +133,7 @@ const PaymentPage = () => {
         cvv: formData.cvv,
       });
       console.log("Payment successful:", response.data);
-      navigate("/my-orders");
+      navigate("/order/review");
     } catch (error) {
       console.log(error)
     }
