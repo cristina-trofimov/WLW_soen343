@@ -13,6 +13,7 @@ import {
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosClient from "../axiosClient";
 
 interface PaymentFormData {
   cardNumber: string;
@@ -114,13 +115,34 @@ const PaymentPage = () => {
     setFormData((prev) => ({ ...prev, cvv: numericValue }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log("Payment submitted:", formData);
+  //   navigate("/home");
+  //   // Send to payment processor
+
+
+
+  // };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Payment submitted:", formData);
-    // Send to payment processor
-    // MISSING TRACKING NUMBER
+    try {
+      // Send the payment request to the backend
+      const response = await axiosClient.post("/payment", {
+        cardNumber: formData.cardNumber,
+        cardHolder: formData.cardHolder,
+        expirationDate: formData.expirationDate,
+        cvv: formData.cvv,
+      });
+      console.log("Payment successful:", response.data);
+      // MISSING TRACKING NUMBER
     navigate("/order/review", { state: {trackingNum: "", senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
-                                        receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount } });
+                                receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount } });
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
