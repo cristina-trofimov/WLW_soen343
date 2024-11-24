@@ -61,5 +61,6 @@ class TrackingDetails(db.Model):
     __tablename__ = 'trackingDetails'
     trackingNumber = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), primary_key=True)
     lastRegisteredLocation = db.Column(db.String(100), nullable=False)
-    timeLastRegistered = db.Column(db.String(100), nullable=True)
+    estimatedDeliveryTime = db.Column(db.String(100), nullable=True)
     status = db.Column(db.String(100), nullable=False)
+    deliveryPersonNumber = db.Column(db.Integer, nullable=True)
