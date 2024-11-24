@@ -14,9 +14,9 @@ CURRENT_USER_FILE = 'current_user.json'
 def payment():
     
     print("Hitting the payment wall")
-    number = request.json["number"]
-    name = request.json["name"]
-    expiration_date = request.json["expriationDate"]
+    number = request.json["cardNumber"].replace(" ", "")
+    name = request.json["cardHolder"]
+    expiration_date = request.json["expirationDate"]
     cvv = request.json["cvv"]
 
     if not number or not name or not expiration_date or not cvv:
