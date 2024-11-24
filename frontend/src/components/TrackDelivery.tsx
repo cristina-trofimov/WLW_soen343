@@ -1,34 +1,56 @@
 import { useState } from 'react';
-import { Button, TextInput, Group, Modal} from '@mantine/core';
+import { Button, TextInput, Group, Modal, Loader, Text } from '@mantine/core';
+
+import axiosClient from '../axiosClient';
+import { TrackingDetails } from '../interface/trackingDetails';
 
 const TrackDelivery = () => {
   const [trackingId, setTrackingId] = useState('');
   const [modalOpened, setModalOpened] = useState(false);
-  const [deliveryInfo, setDeliveryInfo] = useState<null | {
-    status: string,
-    location: string,
-    eta: string,
-    contactName: string,
-    contactPhone: string
-  }>(null);
+  const [deliveryInfo, setDeliveryInfo] = useState<TrackingDetails | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleTrack = () => {
-    // Simulate API call to get delivery information , for now hardcoded
-    if (trackingId === 'O123456789') {
-      setDeliveryInfo({
-        status: 'In Transit',
-        location: 'New York, NY',
-        eta: '2024-11-09 15:30',
-        contactName: 'Boudour Bannouri',
-        contactPhone: '+1 438 221 2758',
-      });
-      setErrorMessage('');  // Clear any previous errors
-      setModalOpened(true); // Open the modal
-    } else {
+  const handleTrack = async () => {
+    setIsLoading(true);
+    setErrorMessage('');  // Clear any previous errors
+    setDeliveryInfo(null);  // Reset delivery info
+
+    try {
+      const response = await axiosClient.get("/tracking_details", { params: { trackingNumber: trackingId } });
+
+      if (response.status === 200) {
+        console.log(response.data);
+        setDeliveryInfo(response.data);
+        setModalOpened(true);
+      } else {
+        setErrorMessage('Oops! We could not find any package associated with that tracking ID. Please verify and try again.');
+        setModalOpened(true);
+      }
+    } catch (err) {
       setErrorMessage('Oops! We could not find any package associated with that tracking ID. Please verify and try again.');
-      setDeliveryInfo(null);  // Reset delivery info
-      setModalOpened(true);   // Show error modal
+      setModalOpened(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const handleCreateTracking = async () => {
+    const trackingData = {
+      trackingNumber: '1234',
+      lastRegisteredLocation: 'New York, NY',
+      status: 'In Transit',
+      estimatedDeliveryTime: '2024-11-20 14:30:00',
+      deliveryPersonNumber: 12345
+    };
+
+    try {
+      const response = await axiosClient.post('/create_tracking', trackingData);
+      console.log(response);
+      setErrorMessage('Tracking detail created successfully!');
+    } catch (error) {
+      setErrorMessage('Error creating tracking detail');
     }
   };
 
@@ -54,6 +76,7 @@ const TrackDelivery = () => {
           radius="md"
           placeholder="ENTER TRACKING ID"
           value={trackingId}
+          disabled={isLoading}
           onChange={(e) => setTrackingId(e.target.value)}
           style={{
             width: '500px',
@@ -67,7 +90,7 @@ const TrackDelivery = () => {
             width: '100px',
             fontSize: '18px', // Increase font size
           }}>
-          Track
+          {isLoading ? <Loader color='black' size="sm" /> : 'Track'}
         </Button>
       </Group>
 
@@ -81,12 +104,12 @@ const TrackDelivery = () => {
           <div>
             <h1> Delivery Information </h1>
             <p><strong>Package Status:</strong> {deliveryInfo.status}</p>
-            <p><strong>Real-time Location:</strong> {deliveryInfo.location}</p>
-            <p><strong>Estimated Time of Arrival:</strong> {deliveryInfo.eta}</p>
-            <p><strong>Delivery Person Contact:</strong> {deliveryInfo.contactName} ({deliveryInfo.contactPhone})</p>
+            <p><strong>Last Registered Location:</strong> {deliveryInfo.lastRegisteredLocation}</p>
+            <p><strong>Estimated Time of Arrival:</strong> {deliveryInfo.estimatedDeliveryTime || 'Not available'}</p>
+            <p><strong>Delivery Person Number:</strong> {deliveryInfo.deliveryPersonNumber || 'Not assigned'}</p>
           </div>
         ) : (
-          <p style={{color: 'red' }}>{errorMessage}</p>
+          <p style={{ color: 'red' }}>{errorMessage}</p>
         )}
         <Button onClick={() => setModalOpened(false)} style={{ marginTop: '10px' }}>Close</Button>
       </Modal>
