@@ -14,7 +14,7 @@ import OrderingPage from './pages/OrderingPage.tsx';
 import ConfirmationPage from './pages/ConfirmationPage.tsx';
 import OrderPage from './pages/OrderPage.tsx';
 import MyOrdersPage from './pages/MyOrdersPage.tsx';
-
+import ContactUs from './pages/ContactUsPage.tsx';
 
 
 const router = createBrowserRouter([
@@ -52,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "my-orders",
         element: <MyOrdersPage />,
+      },
+      {
+        path: "contact-us",
+        element: <ContactUs />,
       }
     ]
   },

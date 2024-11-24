@@ -17,6 +17,7 @@ const Layout = () => {
                 </a>
                 <button className={classes.headerButton} onClick={() => navigate("/quote")}>QUOTATION</button>
                 <button className={classes.headerButton} onClick={() => navigate("/")}>TRACKING</button>
+                <button className={classes.headerButton} onClick={() => navigate("/contact-us")}>CONTACT US</button>
                 {sessionStorage.getItem("isLogged") === "false" ? ( <LoginRegister /> ) : 
                     (<>
                         <button className={classes.headerButton} onClick={() => navigate("/order")}>SHIPPING</button>
