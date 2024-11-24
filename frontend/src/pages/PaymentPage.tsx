@@ -124,11 +124,7 @@ const PaymentPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Payment submitted:", formData);
-
     try {
-
-      
-
       // Send the payment request to the backend
       const response = await axiosClient.post("/payment", {
         cardNumber: formData.cardNumber,
@@ -200,6 +196,7 @@ const PaymentPage = () => {
               type="submit"
               fullWidth
               mt="md"
+              onClick={() => handleSubmit}
             >
               Pay Now
             </Button>
