@@ -24,6 +24,10 @@ interface PaymentFormData {
 
 interface LocationState {
   state?: {
+    senderName?: String;
+    senderAddress?: String;
+    receiverName?: String;
+    receiverAddress?: String;
     amount?: number;
   };
 }
@@ -113,8 +117,10 @@ const PaymentPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Payment submitted:", formData);
-    navigate("/order/review");
     // Send to payment processor
+    // MISSING TRACKING NUMBER
+    navigate("/order/review", { state: {trackingNum: "", senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
+                                        receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount } });
   };
 
   return (

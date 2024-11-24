@@ -23,7 +23,7 @@ const OrderingPage = () => {
   return (
     <Box style={{ display: "flex" }}>
       <Box style={{ width: "20%", padding: "20px" }}>
-        <Timeline active={activeIndex} bulletSize={24} lineWidth={2} align="right" >
+        <Timeline active={activeIndex} bulletSize={24} lineWidth={2} align="right" style={{ transform: "rotate(-90deg)" }} >
           {Object.entries(timelineData).map(([path, items], index) => (
             <Timeline.Item
               key={path}

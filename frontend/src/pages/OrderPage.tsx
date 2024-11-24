@@ -125,7 +125,8 @@ const OrderPage = () => {
 
         // navigate to PaymentPage with the amount = calculatedAmount
         const calculatedAmount = formData.chosenShippingPrice;
-        navigate("/order/payment", { state: { amount: calculatedAmount } });
+        navigate("/order/payment", { state: {senderName: formData.senderName, senderAddress: formData.senderAddress,
+                                             receiverName: formData.recipientName, receiverAddress: formData.recipientAddress, amount: calculatedAmount } });
       } else {
         // Handle server-side errors
         console.error('Failed to place order:', response.statusText);
