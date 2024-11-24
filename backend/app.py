@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 
 bcrypt.init_app(app)
-cors = CORS(app, supports_credentials=True)
+cors = CORS(app, supports_credentials=True,resources={r"/*": {"origins": "http://localhost:5173"}})
 server_session = Session(app)
 
 db.init_app(app)

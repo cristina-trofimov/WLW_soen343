@@ -88,7 +88,8 @@ def create_order():
         new_tracking_details = TrackingDetails(
             trackingNumber=new_order.trackingNumber,
             lastRegisteredLocation='Warehouse',
-            status='In transit'  
+            status='In transit', 
+            estimatedDeliveryTime=new_order_details.chosenDeliveryDate
         )
         
         db.session.add(new_tracking_details)

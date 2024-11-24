@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button, TextInput, Group, Modal, Loader, Text } from '@mantine/core';
-import { TrackingDetails } from '../interface/trackingDetails.interface';
+
 import axiosClient from '../axiosClient';
+import { TrackingDetails } from '../interface/trackingDetails';
 
 const TrackDelivery = () => {
   const [trackingId, setTrackingId] = useState('');
@@ -19,6 +20,7 @@ const TrackDelivery = () => {
       const response = await axiosClient.get("/tracking_details", { params: { trackingNumber: trackingId } });
 
       if (response.status === 200) {
+        console.log(response.data);
         setDeliveryInfo(response.data);
         setModalOpened(true);
       } else {
@@ -31,22 +33,6 @@ const TrackDelivery = () => {
     } finally {
       setIsLoading(false);
     }
-    // // Simulate API call to get delivery information , for now hardcoded
-    // if (trackingId === 'O123456789') {
-    //   setDeliveryInfo({
-    //     status: 'In Transit',
-    //     location: 'New York, NY',
-    //     eta: '2024-11-09 15:30',
-    //     contactName: 'Boudour Bannouri',
-    //     contactPhone: '+1 438 221 2758',
-    //   });
-    //   setErrorMessage('');  // Clear any previous errors
-    //   setModalOpened(true); // Open the modal
-    // } else {
-    //   setErrorMessage('Oops! We could not find any package associated with that tracking ID. Please verify and try again.');
-    //   setDeliveryInfo(null);  // Reset delivery info
-    //   setModalOpened(true);   // Show error modal
-    // }
   };
 
 
@@ -61,6 +47,7 @@ const TrackDelivery = () => {
 
     try {
       const response = await axiosClient.post('/create_tracking', trackingData);
+      console.log(response);
       setErrorMessage('Tracking detail created successfully!');
     } catch (error) {
       setErrorMessage('Error creating tracking detail');
@@ -105,17 +92,6 @@ const TrackDelivery = () => {
           }}>
           {isLoading ? <Loader color='black' size="sm" /> : 'Track'}
         </Button>
-
-        <div>
-          <Button
-            onClick={handleCreateTracking}
-            color="blue"
-            size="md"
-          >
-            Create Tracking Detail
-          </Button>
-          {errorMessage && <Text >{errorMessage}</Text>}
-        </div>
       </Group>
 
       {/* Modal for displaying delivery information or error */}
