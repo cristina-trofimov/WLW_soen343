@@ -21,3 +21,43 @@
 .suggestion-item:hover {
     background-color: #f0f0f0;
 }
+/* General container spacing for alignment */
+#allInfo {
+  background-color: #f9f9f9;
+  color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* Button styles to make it look discreet */
+.info-button {
+  background-color: #d7dec2;
+  color: white;
+  padding: 5px 10px;
+  border: 1px solid #cce;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.info-button:hover {
+  background-color: #a1a88b;
+}
+
+/* Form adjustments to keep it aligned */
+form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+textarea,
+input,
+select,
+button {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}

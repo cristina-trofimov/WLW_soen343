@@ -141,11 +141,14 @@ const QuotationPage: React.FC = () => {
         const ecoPrice = regularPrice * 0.8; // Eco shipping is 20% cheaper
 
         // Update the state with the prices
-        qFormData.shippingPrices = ({
+        setQFormData((prev) => ({
+        ...prev,
+        shippingPrices: {
             regular: parseFloat(regularPrice.toFixed(2)),
             express: parseFloat(expressPrice.toFixed(2)),
-            eco: parseFloat(ecoPrice.toFixed(2))
-        });
+            eco: parseFloat(ecoPrice.toFixed(2)),
+        },
+    }));
     };
     const calculateDeliveryDate = (daysToAdd: number): string => {
         const today = new Date();
@@ -157,11 +160,14 @@ const QuotationPage: React.FC = () => {
         });
     };
     const updateDeliveryDates = () => {
-        qFormData.deliveryDate = ({
-            regular: calculateDeliveryDate(5),   // Regular: 5 days from today
-            express: calculateDeliveryDate(2),   // Express: 2 days from today
-            eco: calculateDeliveryDate(8)        // Eco: 8 days from today
-        });
+        setQFormData((prev) => ({
+        ...prev,
+        deliveryDate: {
+            regular: calculateDeliveryDate(5),
+            express: calculateDeliveryDate(2),
+            eco: calculateDeliveryDate(8),
+        },
+    }));
     };
 
     // Calculate the distance using OpenRouteService API
@@ -200,7 +206,10 @@ const QuotationPage: React.FC = () => {
                         const responseData = JSON.parse(this.responseText);
                         const distanceInMeters = responseData.features[0].properties.segments[0].distance;
                         const distanceInKm = (distanceInMeters / 1000).toFixed(2);
-                        qFormData.distance = distanceInKm + 'km';
+                        setQFormData((prev) => ({
+                        ...prev,
+                        distance: distanceInKm + 'km',
+                }));
                         calculateShippingPrices(parseFloat(distanceInKm));
                         updateDeliveryDates();
                         setIsResultsVisible(true);
@@ -310,16 +319,67 @@ const QuotationPage: React.FC = () => {
 
             {isResultsVisible && (
                 <>
-                    <p>Distance: {qFormData.distance}</p>
+                    <div className="shipping-container">
+                        <h2 className="shipping-title">Shipping Information</h2>
 
-                    <div>
-                        <p>Shipping prices & Dates</p>
-                        <p>Regular Shipping: ${qFormData.shippingPrices.regular} - delivers
-                            on {qFormData.deliveryDate.regular}</p>
-                        <p>Express Shipping: ${qFormData.shippingPrices.express} - delivers
-                            on {qFormData.deliveryDate.express}</p>
-                        <p>Eco Shipping: ${qFormData.shippingPrices.eco} - delivers on {qFormData.deliveryDate.eco}</p>
+                        <p className="distance">
+                            <strong>Distance:</strong> {qFormData.distance} km
+                        </p>
+
+                        <div className="shipping-prices">
+                            <h3 className="prices-title">Shipping Prices & Dates</h3>
+
+                            {/* Regular Shipping */}
+                            <div className="shipping-option">
+                                <p>
+                                    <strong>Regular Shipping:</strong> ${qFormData.shippingPrices.regular} - delivers
+                                    on {qFormData.deliveryDate.regular}
+                                </p>
+                                <button
+                                    onClick={() => document.getElementById('regularInfo').hidden = !document.getElementById('regularInfo').hidden}
+                                    className="info-button"
+                                >
+                                    More Info
+                                </button>
+                                <p id="regularInfo" hidden className="info-text">
+                                    Regular shipping is cost-effective and usually takes longer to deliver, making it ideal for non-urgent deliveries. This option typically consolidates packages, reducing the number of trips and overall fuel consumption. While slower, regular shipping often has a lower environmental impact compared to faster options, as it prioritizes efficiency over speed. Perfect for those who value sustainability and don’t mind waiting a few extra days.
+                                </p>
+                            </div>
+
+                            {/* Express Shipping */}
+                            <div className="shipping-option">
+                                <p>
+                                    <strong>Express Shipping:</strong> ${qFormData.shippingPrices.express} - delivers
+                                    on {qFormData.deliveryDate.express}
+                                </p>
+                                <button
+                                    onClick={() => document.getElementById('expressInfo').hidden = !document.getElementById('expressInfo').hidden}
+                                    className="info-button"
+                                >
+                                    More Info
+                                </button>
+                                <p id="expressInfo" hidden className="info-text">
+Express shipping delivers faster at a higher cost, making it a great choice for urgent deliveries. However, the speed comes at an environmental cost, as it often requires additional trips, less efficient routing, and sometimes air transportation. Despite its environmental footprint, express shipping is invaluable for time-sensitive packages like gifts or critical business shipments. To mitigate the impact, many companies are working toward carbon-offset programs for express services.                                </p>
+                            </div>
+
+                            {/* Eco Shipping */}
+                            <div className="shipping-option">
+                                <p>
+                                    <strong>Eco Shipping:</strong> ${qFormData.shippingPrices.eco} - delivers
+                                    on {qFormData.deliveryDate.eco}
+                                </p>
+                                <button
+                                    onClick={() => document.getElementById('ecoInfo').hidden = !document.getElementById('ecoInfo').hidden}
+                                    className="info-button"
+                                >
+                                    More Info
+                                </button>
+                                <p id="ecoInfo" hidden className="info-text">
+Eco shipping is environmentally friendly, balancing cost and delivery time. It emphasizes green practices such as using electric vehicles, optimizing delivery routes, and consolidating shipments to reduce carbon emissions. While slightly slower than express shipping, eco shipping is a responsible choice for those who care about sustainability. This option supports efforts to combat climate change while still providing reliable service for most delivery needs.                                </p>
+                            </div>
+                        </div>
                     </div>
+
                 </>
             )}
         </Container>
