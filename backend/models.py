@@ -23,17 +23,22 @@ class Package(db.Model):
     width = db.Column(db.Float, nullable=False)
     height = db.Column(db.Float, nullable=False)
     orderId = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), nullable=True, index=True)
+    # relationship to order, i think it will make it easier to query the order details
+    order = db.relationship('Order', backref='packages', lazy=True, foreign_keys=[orderId])
 
 class Order(db.Model):
     __tablename__ = 'orders'
     trackingNumber = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    price = db.Column(db.Float, nullable=True)
+    price = db.Column(db.Float, nullable=False)
     packageId = db.Column(db.String(32), db.ForeignKey('packages.id'), nullable=False, index=True)
-    orderDetailsId = db.relationship('OrderDetails', backref='order', lazy=True)
+    orderDetailsId = db.relationship('OrderDetails', backref='orders', lazy=True)
+    trackingDetailsId = db.relationship('TrackingDetails', backref='orders', lazy=True)
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
+    # relationship to order, i think it will make it easier to query the order details
+    customer = db.relationship('Customer', backref='orders', lazy=True)
 
 class DeliveryTypeEnum(Enum):
-    REGULAR = "regular"
+    STANDARD = "standard"
     EXPRESS = "express"
     ECO = "eco"
 
@@ -50,4 +55,12 @@ class OrderDetails(db.Model):
     deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
     specialInstructions = db.Column(db.String(500), nullable=True)
     distance = db.Column(db.String(50), nullable=True)
-
+    
+   
+class TrackingDetails(db.Model):
+    __tablename__ = 'trackingDetails'
+    trackingNumber = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), primary_key=True)
+    lastRegisteredLocation = db.Column(db.String(100), nullable=False)
+    estimatedDeliveryTime = db.Column(db.String(100), nullable=True)
+    status = db.Column(db.String(100), nullable=False)
+    deliveryPersonNumber = db.Column(db.Integer, nullable=True)

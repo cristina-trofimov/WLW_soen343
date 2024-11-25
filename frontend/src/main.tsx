@@ -7,9 +7,14 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import Layout from './routes/Layout'
 import ErrorPage from './pages/ErrorPage'
 import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
 import QuotationPage from "./pages/QuotationPage.tsx";
-import OrderPage from './pages/Orderpage.tsx';
+import PaymentPage from './pages/PaymentPage.tsx';
+import ChatbotPopup from './components/ChatbotPopup.tsx';
+import OrderingPage from './pages/OrderingPage.tsx';
+import ConfirmationPage from './pages/ConfirmationPage.tsx';
+import OrderPage from './pages/OrderPage.tsx';
+import MyOrdersPage from './pages/MyOrdersPage.tsx';
+import ContactUs from './pages/ContactUsPage.tsx';
 
 
 const router = createBrowserRouter([
@@ -34,15 +39,23 @@ const router = createBrowserRouter([
         element: <QuotationPage />,
 
       },
-        {
+      {
         path: "order",
-        element: <OrderPage />,
-
+        element: <OrderingPage />,
+        children: [
+          { path: "", element: <Navigate to="place" replace /> },
+          { path: "place", element: <OrderPage /> },
+          { path: "payment", element: <PaymentPage /> },
+          { path: "review", element: <ConfirmationPage /> },
+        ]
       },
       {
-        path: "/login",
-        element: <LoginPage />,
-        errorElement: <ErrorPage />
+        path: "my-orders",
+        element: <MyOrdersPage />,
+      },
+      {
+        path: "contact-us",
+        element: <ContactUs />,
       }
     ]
   },
@@ -70,8 +83,9 @@ const theme = createTheme({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme='light'>
       <RouterProvider router={router} />
+      <ChatbotPopup />
     </MantineProvider>
 
   </StrictMode>,

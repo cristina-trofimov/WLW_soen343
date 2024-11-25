@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import Blueprint, request, jsonify, current_app
-from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum
+from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum, TrackingDetails
 import json
 from endpoints.auth import get_current_user
 
@@ -11,7 +11,7 @@ order = Blueprint('order', __name__)
 CURRENT_USER_FILE = 'current_user.json'
 
 @order.route("/create_order", methods=["POST"])
-def createOrder():
+def create_order():
     try:
         # Extract input data from the request JSON
         form_data = request.get_json()
@@ -79,10 +79,22 @@ def createOrder():
             specialInstructions=special_instructions,
             distance=distance
         )
+        
+        
 
         db.session.add(new_order_details)
         db.session.commit()
-
+        
+        new_tracking_details = TrackingDetails(
+            trackingNumber=new_order.trackingNumber,
+            lastRegisteredLocation='Warehouse',
+            status='In transit', 
+            estimatedDeliveryTime=new_order_details.chosenDeliveryDate
+        )
+        
+        db.session.add(new_tracking_details)
+        db.session.commit()
+        
         # Prepare response
         response = {
             "trackingNumber": new_order.trackingNumber,
@@ -115,3 +127,105 @@ def createOrder():
         # Use current_app.logger to log errors
         current_app.logger.error(f"Error creating order: {str(e)}")
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+
+@order.route('/get_all_orders', methods=['GET'])
+def get_all_orders():
+    try:
+        # Query all orders, along with related OrderDetails and Package
+        orders = Order.query.all()
+
+        # Serialize the data to JSON format
+        orders_list = []
+        for order in orders:
+            # Get the related package
+            package = Package.query.get(order.packageId)
+            
+            # Get the related order details (could be multiple)
+            order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            
+            # Append the order data, along with package and order details
+            orders_list.append({
+                'trackingNumber': order.trackingNumber,
+                'price': order.price,
+                'package': {
+                    'id': package.id,
+                    'weight': package.weight,
+                    'length': package.length,
+                    'width': package.width,
+                    'height': package.height,
+                } if package else None,
+                'orderDetails': [{
+                    'id': detail.id,
+                    'senderName': detail.senderName,
+                    'senderAddress': detail.senderAddress,
+                    'recipientName': detail.recipientName,
+                    'recipientAddress': detail.recipientAddress,
+                    'recipientPhone': detail.recipientPhone,
+                    'chosenDeliveryDate': detail.chosenDeliveryDate,
+                    'deliveryMethod': detail.deliveryMethod,
+                    'specialInstructions': detail.specialInstructions,
+                    'distance': detail.distance,
+                } for detail in order_details],
+                'customerId': order.customerId
+            })
+        
+        return jsonify(orders_list), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@order.route('/get_current_user_orders', methods=['GET'])
+def get_current_user_orders():
+    try:
+        # Get current user ID (assumes function get_current_user() is defined in the same module)
+        customer_id = get_current_user()
+        if not customer_id:
+            return jsonify({"error": "Unauthorized. Please log in."}), 401
+
+        # Query all orders of the current user
+        orders = Order.query.filter_by(customerId=customer_id).all()
+
+        # If no orders are found, return a message
+        if not orders:
+            return jsonify({"message": "You have no orders."}), 200
+
+        # Serialize the data to JSON format
+        orders_list = []
+        for order in orders:
+            # Get the related package
+            package = Package.query.get(order.packageId)
+            
+            # Get the related order details (assume there is only one related detail per order)
+            order_detail = OrderDetails.query.filter_by(orderId=order.trackingNumber).first()
+            
+            # Append the order data, along with package and order details
+            orders_list.append({
+                'trackingNumber': order.trackingNumber,
+                'price': order.price,
+                'package': {
+                    'id': package.id,
+                    'weight': package.weight,
+                    'length': package.length,
+                    'width': package.width,
+                    'height': package.height,
+                } if package else None,
+                'orderDetails': {
+                    'id': order_detail.id,
+                    'senderName': order_detail.senderName,
+                    'senderAddress': order_detail.senderAddress,
+                    'recipientName': order_detail.recipientName,
+                    'recipientAddress': order_detail.recipientAddress,
+                    'recipientPhone': order_detail.recipientPhone,
+                    'chosenDeliveryDate': order_detail.chosenDeliveryDate,
+                    'deliveryMethod': order_detail.deliveryMethod,
+                    'specialInstructions': order_detail.specialInstructions,
+                    'distance': order_detail.distance,
+                } if order_detail else None,
+                'customerId': order.customerId
+            })
+        
+        return jsonify(orders_list), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
