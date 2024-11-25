@@ -25,6 +25,10 @@ interface PaymentFormData {
 
 interface LocationState {
   state?: {
+    senderName?: String;
+    senderAddress?: String;
+    receiverName?: String;
+    receiverAddress?: String;
     amount?: number;
   };
 }
@@ -133,7 +137,9 @@ const PaymentPage = () => {
         cvv: formData.cvv,
       });
       console.log("Payment successful:", response.data);
-      navigate("/order/review");
+      // MISSING TRACKING NUMBER
+    navigate("/order/review", { state: {trackingNum: "", senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
+                                receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount } });
     } catch (error) {
       console.log(error)
     }
