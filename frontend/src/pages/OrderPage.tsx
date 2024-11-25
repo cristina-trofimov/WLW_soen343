@@ -367,6 +367,24 @@ const OrderPage: React.FC = () => {
                   value={formData.deliveryMethod}
                   onChange={(value) => handleInputChange('deliveryMethod', value || '')}
               />
+              <button
+                  type="button" // Prevents form submission
+                  onClick={() => {
+                    const infoElement = document.getElementById('allInfo');
+                    if (infoElement) {
+                      infoElement.hidden = !infoElement.hidden; // Toggle hidden state
+                    }
+                  }}
+                  className="info-button"
+              >
+                More info about delivery methods
+              </button>
+              <p id="allInfo" hidden className="info-text">
+                Regular shipping is cost-effective and usually takes longer to deliver. Ideal for non-urgent deliveries.<br/>
+                Express shipping delivers faster at a higher cost. Great for urgent deliveries.<br/>
+                Eco shipping is environmentally friendly and balances cost and delivery time.
+              </p>
+
               <Textarea
                   label="Special Instructions"
                   value={formData.specialInstructions}

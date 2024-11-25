@@ -21,3 +21,68 @@
 .suggestion-item:hover {
     background-color: #f0f0f0;
 }
+/* General Container */
+.shipping-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #b8c09d;
+}
+
+/* Title */
+.shipping-title {
+    text-align: center;
+    color: white;
+}
+
+/* Distance */
+.distance {
+    font-size: 18px;
+    color: white;
+}
+
+/* Prices Section */
+.shipping-prices {
+    margin-top: 20px;
+}
+
+.prices-title {
+    border-bottom: 2px solid #e9ece9;
+    padding-bottom: 8px;
+    color: white;
+}
+
+/* Individual Shipping Option */
+.shipping-option {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #e9ece9;
+}
+
+/* Info Button */
+.info-button {
+    padding: 6px 12px;
+    background-color: #a1a88b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.info-button:hover {
+    background-color: #d7dec2;
+}
+
+/* Info Text */
+.info-text {
+    margin-top: 10px;
+    color: black;
+    font-size: 14px;
+}
