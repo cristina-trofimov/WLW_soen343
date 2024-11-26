@@ -1,7 +1,7 @@
 import './MyOrdersPage.css';
 import axiosClient from "../axiosClient";
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Title } from '@mantine/core';
+import { Card, Container, Title, Button } from '@mantine/core';
 
 // Define the types for the order data
 interface Package { // might not need this
@@ -43,15 +43,15 @@ const MyOrdersPage: React.FC = () => {
             try {
                 const response = await axiosClient.get('/get_current_user_orders');
 
-                if (response.status === 200){
+                if (response.status === 200) {
                     // success
                     console.log('Orders retrieved successfully!');
                     setOrders(response.data as Order[]);
                 }
-                else{
+                else {
                     // error
                     console.log('Failed to retrieve orders: ', response.statusText);
-                }   
+                }
                 setError(null);
             } catch (err: any) {
                 setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
@@ -76,7 +76,7 @@ const MyOrdersPage: React.FC = () => {
             });
         }
     }, [orders]);
-     // This will trigger whenever orders state changes
+    // This will trigger whenever orders state changes
 
     if (loading) {
         return <div>Loading...</div>;
@@ -95,15 +95,15 @@ const MyOrdersPage: React.FC = () => {
                 <p className="no-orders">You have no orders.</p>
             ) : (
                 orders.map((order) => (
-                    <Card 
-                        key={order.trackingNumber} 
-                        className="order-card" 
-                        shadow="lg" 
-                        padding="lg" 
-                        radius="md" 
-                        withBorder 
+                    <Card
+                        key={order.trackingNumber}
+                        className="order-card"
+                        shadow="lg"
+                        padding="lg"
+                        radius="md"
+                        withBorder
                         mb="md">
-                            
+
                         <h2 className="tracking-number">
                             Tracking Number: {order.trackingNumber}
                         </h2>
@@ -128,13 +128,30 @@ const MyOrdersPage: React.FC = () => {
                                         <p><strong>Recipient Address:</strong> {order.orderDetails.recipientAddress}</p>
                                     </div>
                                 </div>
+
+                                <div className="review-order">
+                                    <Button disabled={new Date(order.orderDetails.chosenDeliveryDate) > new Date()}>
+                                        Review Order
+                                    </Button>
+                                    {new Date(order.orderDetails.chosenDeliveryDate) > new Date() && (
+                                        <p className="disabled-message">You have to wait until the delivery is complete to leave a review.</p>
+                                    )}
+                                </div>
+
+                                {/* <div>
+                                    {console.log('BONJOUUUUR Chosen Delivery Date:', order.orderDetails.chosenDeliveryDate)}
+                                    {console.log('BONJOUUUUR Chosen Delivery Date:', order.orderDetails.chosenDeliveryDate)}
+                                    {new Date(order.orderDetails.chosenDeliveryDate) > new Date() && (
+                                        <Button>Review Order</Button>
+                                    )}
+                                </div> */}
                             </div>
                         )}
                     </Card>
                 ))
             )}
         </Container>
-    ); 
+    );
 };
 
 export default MyOrdersPage;

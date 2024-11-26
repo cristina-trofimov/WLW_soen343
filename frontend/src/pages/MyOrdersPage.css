@@ -58,3 +58,12 @@
 .order-details {
     margin-top: 20px;
 }
+.review-order {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.review-order > p {
+    padding-bottom: 15px;
+    margin-left: 20px;
+}
