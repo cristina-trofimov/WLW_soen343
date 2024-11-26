@@ -34,13 +34,13 @@ def submit_form():
 
 
 def send_email(topic, user_email, message):
-    sender_email = "miss.worldwide.wlw@hotmail.com"
-    sender_password = "MissWorldwide123"
-    recipient_email = "miss.worldwide.wlw@hotmail.com"
+    sender_email = "miss.worldwide.wlw@gmail.com"
+    sender_password = "czzv bvwm ccgv icin"
+    recipient_email = "miss.worldwide.wlw@gmail.com"
 
     # Compose email
     subject = topic
-    body = f"Message: {message}\nSent by: {user_email}"
+    body = f"{message}\nSent by: {user_email}"
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
@@ -49,7 +49,7 @@ def send_email(topic, user_email, message):
     msg.attach(MIMEText(body, 'plain'))
 
     # Send email using SMTP
-    with smtplib.SMTP('smtp.office365.com', 587) as server:
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
         server.login(sender_email, sender_password)
         server.send_message(msg)
