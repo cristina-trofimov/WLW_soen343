@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import Flask, jsonify, request
-from models import db, TrackingDetails
+from models import DeliveryStatusEnum, db, TrackingDetails
 from sqlalchemy.orm import joinedload
 
 
@@ -99,6 +99,9 @@ def update_tracking_details():
         if estimated_delivery_time is not None:
             tracking_details.estimatedDeliveryTime = estimated_delivery_time
         if status is not None:
+            # Validate the status against the enum values
+            if status not in [item.value for item in DeliveryStatusEnum]:
+                return jsonify({"status": "error", "message": f"Invalid status value: {status}. Valid values are: {[item.value for item in DeliveryStatusEnum]}"}), 400
             tracking_details.status = status
         if delivery_person_number is not None:
             tracking_details.deliveryPersonNumber = delivery_person_number
