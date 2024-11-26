@@ -167,7 +167,8 @@ def get_all_orders():
                     'specialInstructions': detail.specialInstructions,
                     'distance': detail.distance,
                 } for detail in order_details],
-                'customerId': order.customerId
+                'customerId': order.customerId,
+                'review': order.review
             })
         
         return jsonify(orders_list), 200
@@ -222,10 +223,40 @@ def get_current_user_orders():
                     'specialInstructions': order_detail.specialInstructions,
                     'distance': order_detail.distance,
                 } if order_detail else None,
-                'customerId': order.customerId
+                'customerId': order.customerId,
+                'review': order.review
             })
+
+            print("MERDE A LA FIN", order.review)
         
         return jsonify(orders_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@order.route('/submit_review', methods=['POST'])
+def submit_review():
+    try:
+
+        trackingNumber = request.json["orderId"]
+        review = request.json["review"]
+
+        print("ORDER ID", trackingNumber)
+        print("REVIEW", review)
+
+        order = Order.query.filter_by(trackingNumber=trackingNumber).first()
+
+        print(order)
+
+        if not order:
+            return jsonify({"message": "There is no such order"}), 200
+
+        # add the review to order
+        order.review = review
+
+        db.session.flush()  # This forces the changes to be written to the database
+        db.session.commit()
+
+
+        return jsonify({"message": "Review submitted"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

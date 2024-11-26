@@ -36,6 +36,7 @@ class Order(db.Model):
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
     # relationship to order, i think it will make it easier to query the order details
     customer = db.relationship('Customer', backref='orders', lazy=True)
+    review = db.Column(db.String(1000), nullable=True)
 
 class DeliveryTypeEnum(Enum):
     STANDARD = "standard"
