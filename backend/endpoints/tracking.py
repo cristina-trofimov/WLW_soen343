@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import Flask, jsonify, request
 from models import DeliveryStatusEnum, db, TrackingDetails
 from sqlalchemy.orm import joinedload
+from datetime import datetime
 
 
 tracking = Blueprint('tracking', __name__)
@@ -11,12 +12,28 @@ tracking = Blueprint('tracking', __name__)
 def get_tracking_details():
     tracking_number = request.args.get('trackingNumber')
 
+    def check_and_update_status(tracking_detail):
+        # Check if estimatedDeliveryTime exists and has passed
+        if tracking_detail.estimatedDeliveryTime:
+            try:
+                estimated_date = datetime.strptime(tracking_detail.estimatedDeliveryTime, "%B %d, %Y")
+                if estimated_date < datetime.now() and tracking_detail.status != "Delivered":
+                    # Update status to Delivered if the date has passed
+                    tracking_detail.status = "Delivered"
+                    db.session.commit()
+            except ValueError:
+                # Log or handle invalid date format
+                return jsonify({"message": "Invalid date format in database."}), 500
+
     if tracking_number:
         # Fetch tracking details for a specific tracking number
         tracking_detail = TrackingDetails.query.get(tracking_number)
         if not tracking_detail:
             return jsonify({"message": "No tracking details found for this tracking number"}), 404
-        
+
+        # Check and update the status if needed
+        check_and_update_status(tracking_detail)
+
         result = format_tracking_detail(tracking_detail)
         return jsonify(result), 200
     else:
@@ -24,7 +41,11 @@ def get_tracking_details():
         tracking_details = TrackingDetails.query.all()
         if not tracking_details:
             return jsonify({"message": "No tracking details found"}), 404
-        
+
+        # Check and update the status for each tracking detail
+        for detail in tracking_details:
+            check_and_update_status(detail)
+
         result = [format_tracking_detail(detail) for detail in tracking_details]
         return jsonify(result), 200
     
