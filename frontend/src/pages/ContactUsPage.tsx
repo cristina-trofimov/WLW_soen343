@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axiosClient from "../axiosClient"
+import axios from 'axios';
 import {
     Select,
     Button,
@@ -18,23 +20,54 @@ const ContactUs: React.FC = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [modalOpened, setModalOpened] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const options = [
-        { value: 'delivery-instructions', label: 'Delivery Instructions' },
-        { value: 'pickup-return', label: 'Pickup Return' },
-        { value: 'tracking-delivery', label: 'Tracking Delivery' },
-        { value: 'report-issue', label: 'Report an Issue' },
-        { value: 'other', label: 'Other' },
+        { value: 'Delivery Instructions', label: 'Delivery Instructions' },
+        { value: 'Pickup Return', label: 'Pickup Return' },
+        { value: 'Tracking Delivery', label: 'Tracking Delivery' },
+        { value: 'Report Issue', label: 'Report an Issue' },
+        { value: 'Other', label: 'Other' },
     ];
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form Data:', { selectedOption, email, message });
 
-        // Trigger the notification
-        setModalOpened(true);
+        // Reset error state
+        setError(null);
 
-        // Add logic to send this data to the backend
+        // Validate inputs
+        if (!selectedOption || !email || !message) {
+            setError('All fields are required.');
+            return;
+        }
+
+        const dataToSubmit = {
+            topic: selectedOption,
+            email: email,
+            message: message,
+        };
+
+        try {
+            console.log("Form data before posting:", dataToSubmit);
+
+            // POST request using axios
+            const response = await axiosClient.post('/send_email', dataToSubmit);
+
+            if (response.status === 200) {
+                // Open success modal
+                setModalOpened(true);
+
+                // Clear form fields
+                setSelectedOption(null);
+                setEmail('');
+                setMessage('');
+            } else {
+                throw new Error(response.data.message || 'Failed to send email.');
+            }
+        } catch (error: any) {
+            setError(error.response?.data?.message || error.message);
+        }
     };
 
     return (
