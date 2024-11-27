@@ -53,6 +53,7 @@ class OrderDetails(db.Model):
     recipientAddress = db.Column(db.String(255), nullable=False)
     recipientPhone = db.Column(db.Integer, nullable=False)
     chosenDeliveryDate = db.Column(db.String(100), nullable=True)
+    chosenDeliveryTime = db.Column(db.String(100), nullable=True, default="12:00 AM")
     deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
     specialInstructions = db.Column(db.String(500), nullable=True)
     distance = db.Column(db.String(50), nullable=True)

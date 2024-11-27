@@ -21,6 +21,7 @@ interface OrderDetail {
     recipientAddress: string;
     recipientPhone: string;
     chosenDeliveryDate: string;
+    chosenDeliveryTime: string;
     deliveryMethod: string;
     specialInstructions: string;
     distance: number;
@@ -73,6 +74,7 @@ const MyOrdersPage: React.FC = () => {
             orders.forEach((order) => {
                 console.log('Order Details:', order.orderDetails); // Check if it's populated
                 console.log('Chosen Delivery Date:', order.orderDetails.chosenDeliveryDate);
+                console.log('Chosen Delivery Time:', order.orderDetails.chosenDeliveryTime);
                 console.log('Sender Name:', order.orderDetails.senderName);
                 console.log('Recipient Name:', order.orderDetails.recipientName);
                 console.log('Review:', order.review);
@@ -148,6 +150,7 @@ const MyOrdersPage: React.FC = () => {
                                 <div className="price-delivery">
                                     <p><strong>Price:</strong> ${order.price}</p>
                                     <p><strong>Delivery Expected By:</strong> {order.orderDetails.chosenDeliveryDate}</p>
+                                    <p><strong>At Time:</strong> {order.orderDetails.chosenDeliveryTime}</p>
                                 </div>
 
                                 <div className="order-info-container">

@@ -73,7 +73,6 @@ def create_order():
             recipientName=recipient_name,
             recipientAddress=recipient_address,
             recipientPhone=recipient_phone,
-            # Convert chosen_delivery_date to a datetime object
             chosenDeliveryDate=chosen_delivery_date,
             deliveryMethod=delivery_method,
             specialInstructions=special_instructions,
@@ -160,6 +159,7 @@ def get_all_orders():
                     'recipientAddress': detail.recipientAddress,
                     'recipientPhone': detail.recipientPhone,
                     'chosenDeliveryDate': detail.chosenDeliveryDate,
+                    'chosenDeliveryTime': detail.chosenDeliveryTime,
                     'deliveryMethod': detail.deliveryMethod,
                     'specialInstructions': detail.specialInstructions,
                     'distance': detail.distance,
@@ -216,6 +216,7 @@ def get_current_user_orders():
                     'recipientAddress': order_detail.recipientAddress,
                     'recipientPhone': order_detail.recipientPhone,
                     'chosenDeliveryDate': order_detail.chosenDeliveryDate,
+                    'chosenDeliveryTime': order_detail.chosenDeliveryTime,
                     'deliveryMethod': order_detail.deliveryMethod,
                     'specialInstructions': order_detail.specialInstructions,
                     'distance': order_detail.distance,
