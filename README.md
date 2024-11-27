@@ -72,6 +72,9 @@ npm install axios
 ```
 npm install @mantine/core @mantine/hooks
 ```
+```
+npm install @mantine/dates
+```
 
 4. To run the frontend : 
 ```
