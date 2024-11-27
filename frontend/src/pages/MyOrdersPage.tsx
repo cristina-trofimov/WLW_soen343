@@ -42,27 +42,25 @@ const MyOrdersPage: React.FC = () => {
         const fetchOrders = async () => {
             try {
                 const response = await axiosClient.get('/get_current_user_orders');
-
-                if (response.status === 200){
-                    // success
-                    console.log('Orders retrieved successfully!');
-                    setOrders(response.data as Order[]);
-                }
-                else{
-                    // error
+    
+                if (response.status === 200) {
+                    // Ensure orders is always an array
+                    const fetchedOrders = Array.isArray(response.data) ? response.data : [];
+                    setOrders(fetchedOrders as Order[]);
+                } else {
                     console.log('Failed to retrieve orders: ', response.statusText);
-                }   
-                setError(null);
+                    setOrders([]); // Fallback to an empty array
+                }
             } catch (err: any) {
                 setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
+                setOrders([]); // Fallback to an empty array on error
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchOrders();
-
-    }, []);
+    }, []);    
 
     // Log the orders state after it has been updated
     useEffect(() => {
@@ -94,7 +92,8 @@ const MyOrdersPage: React.FC = () => {
             {orders.length === 0 ? (
                 <p className="no-orders">You have no orders.</p>
             ) : (
-                orders.map((order) => (
+                // Check if orders is an array before calling .map()
+                Array.isArray(orders) && orders.map((order) => (
                     <Card 
                         key={order.trackingNumber} 
                         className="order-card" 
@@ -103,20 +102,18 @@ const MyOrdersPage: React.FC = () => {
                         radius="md" 
                         withBorder 
                         mb="md">
-                            
+                        
                         <h2 className="tracking-number">
                             Tracking Number: {order.trackingNumber}
                         </h2>
 
-                        {order.orderDetails && order.orderDetails && (
+                        {order.orderDetails && (
                             <div className="order-details">
-                                {/* Price and Delivery Date */}
                                 <div className="price-delivery">
                                     <p><strong>Price:</strong> ${order.price}</p>
                                     <p><strong>Delivery Expected By:</strong> {order.orderDetails.chosenDeliveryDate}</p>
                                 </div>
 
-                                {/* Sender and Recipient Info in two columns */}
                                 <div className="order-info-container">
                                     <div className="sender-info">
                                         <p><strong>Sender:</strong> {order.orderDetails.senderName}</p>
