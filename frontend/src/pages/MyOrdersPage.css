@@ -58,12 +58,47 @@
 .order-details {
     margin-top: 20px;
 }
+
 .review-order {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column; /* Stack items vertically */
 }
-.review-order > p {
-    padding-bottom: 15px;
-    margin-left: 20px;
+
+.review-button {
+    align-self: center; /* Center the button horizontally */
+}
+
+.review-editor {
+    display: flex;
+    flex-direction: column; /* Stack textarea and button */
+}
+
+.review-editor textarea {
+    width: 100%; /* Ensure textarea fills available width */
+    resize: none; /* Prevent manual resizing */
+}
+
+.custom-date-picker {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto; /* Horizontal centering */
+    text-align: center; /* Align text */
+}
+
+.small-edit-button {
+    margin-left: 16px;
+}
+
+.cancel-delivery > button {
+    background-color:lightcoral;
+}
+
+.cancel-delivery > button:hover {
+    background-color:crimson;
+}
+
+.greyed-out {
+    /* background-color: #f0f0f0; */
+    opacity: 0.6; /* Reduced opacity for the greyed-out effect */
+    pointer-events: none; /* Prevent interaction (optional) */
 }

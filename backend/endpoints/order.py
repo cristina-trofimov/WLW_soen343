@@ -88,6 +88,7 @@ def create_order():
             recipientName=recipient_name,
             recipientAddress=recipient_address,
             recipientPhone=recipient_phone,
+            minDeliveryDate=chosen_delivery_date,
             chosenDeliveryDate=chosen_delivery_date,
             deliveryMethod=delivery_method,
             specialInstructions=special_instructions,
@@ -122,6 +123,7 @@ def create_order():
                 "recipientName": new_order_details.recipientName,
                 "deliveryMethod": new_order_details.deliveryMethod,
                 "chosenDeliveryDate": new_order_details.chosenDeliveryDate,
+                "chosenDeliveryTime": new_order_details.chosenDeliveryTime,
                 "specialInstructions": new_order_details.specialInstructions,
                 "distance": new_order_details.distance
             }
@@ -154,6 +156,7 @@ def get_all_orders():
             
             # Get the related order details (could be multiple)
             order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            tracking_details = TrackingDetails.query.filter_by(trackingNumber=orders.trackingNumber).all()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -173,6 +176,7 @@ def get_all_orders():
                     'recipientName': detail.recipientName,
                     'recipientAddress': detail.recipientAddress,
                     'recipientPhone': detail.recipientPhone,
+                    'minDeliveryDate': detail.minDeliveryDate,
                     'chosenDeliveryDate': detail.chosenDeliveryDate,
                     'chosenDeliveryTime': detail.chosenDeliveryTime,
                     'deliveryMethod': detail.deliveryMethod,
@@ -180,7 +184,10 @@ def get_all_orders():
                     'distance': detail.distance,
                 } for detail in order_details],
                 'customerId': order.customerId,
-                'review': order.review
+                'review': order.review,
+                'trackingDetails': {
+                    'status': tracking_details.status
+                }
             })
         
         return jsonify(orders_list), 200
@@ -208,9 +215,12 @@ def get_current_user_orders():
         for order in orders:
             # Get the related package
             package = Package.query.get(order.packageId)
+
+            print(order.trackingNumber)
             
             # Get the related order details (assume there is only one related detail per order)
             order_detail = OrderDetails.query.filter_by(orderId=order.trackingNumber).first()
+            tracking_details = TrackingDetails.query.filter_by(trackingNumber=order.trackingNumber).first()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -230,6 +240,7 @@ def get_current_user_orders():
                     'recipientName': order_detail.recipientName,
                     'recipientAddress': order_detail.recipientAddress,
                     'recipientPhone': order_detail.recipientPhone,
+                    'minDeliveryDate': order_detail.minDeliveryDate,
                     'chosenDeliveryDate': order_detail.chosenDeliveryDate,
                     'chosenDeliveryTime': order_detail.chosenDeliveryTime,
                     'deliveryMethod': order_detail.deliveryMethod,
@@ -237,7 +248,10 @@ def get_current_user_orders():
                     'distance': order_detail.distance,
                 } if order_detail else None,
                 'customerId': order.customerId,
-                'review': order.review
+                'review': order.review, 
+                'trackingDetails': {
+                    'status': tracking_details.status
+                }
             })
 
             print("MERDE A LA FIN", order.review)
@@ -272,4 +286,95 @@ def submit_review():
 
         return jsonify({"message": "Review submitted"}), 200
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@order.route('/modify_delivery_date', methods=['POST'])
+def modify_delivery_date():  
+    # Get form data from the request JSON 
+    data = request.json
+    
+    tracking_number = data.get('trackingNumber')
+    chosenDeliveryDate = data.get('chosenDeliveryDate')
+
+    # Validate inputs
+    if not tracking_number:
+        return jsonify({"status": "error", "message": "Tracking number is required."}), 400
+    
+    try:
+        # Find the tracking details by trackingNumber
+        order_details = OrderDetails.query.filter_by(orderId=tracking_number).one_or_none()
+        
+        if not order_details:
+            return jsonify({"status": "error", "message": "Tracking number not found."}), 404
+        
+        # Update the delivery date
+        order_details.chosenDeliveryDate = chosenDeliveryDate
+        
+        # Commit the changes to the database
+        db.session.commit()
+        
+        return jsonify({"status": "success", "message": "Tracking details updated successfully."}), 200
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+
+@order.route('/modify_delivery_time', methods=['POST'])
+def modify_delivery_time():  
+    # Get form data from the request JSON 
+    data = request.json
+    
+    tracking_number = data.get('trackingNumber')
+    chosenDeliveryTime = data.get('chosenDeliveryTime')
+
+    # Validate inputs
+    if not tracking_number:
+        return jsonify({"status": "error", "message": "Tracking number is required."}), 400
+    
+    try:
+        # Find the tracking details by trackingNumber
+        order_details = OrderDetails.query.filter_by(orderId=tracking_number).one_or_none()
+        
+        if not order_details:
+            return jsonify({"status": "error", "message": "Tracking number not found."}), 404
+        
+        # Update the delivery date
+        order_details.chosenDeliveryTime = chosenDeliveryTime
+        
+        # Commit the changes to the database
+        db.session.commit()
+        
+        return jsonify({"status": "success", "message": "Tracking details updated successfully."}), 200
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+
+@order.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    try:
+        trackingNumber = request.json["orderId"]
+
+        # Query the order using the trackingNumber
+        order = Order.query.filter_by(trackingNumber=trackingNumber).first()
+        
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        # Query the associated tracking details to update the status
+        tracking_details = TrackingDetails.query.filter_by(trackingNumber=trackingNumber).first()
+
+        if not tracking_details:
+            return jsonify({"error": "Tracking details not found"}), 404
+
+        # Change the status of the order to "Cancelled"
+        tracking_details.status = DeliveryStatusEnum.CANCELLED.value
+
+        # Commit the changes
+        db.session.commit()
+
+        return jsonify({"message": "Order cancelled"}), 200
+    except Exception as e:
+        db.session.rollback()  # Rollback in case of an error
         return jsonify({'error': str(e)}), 500

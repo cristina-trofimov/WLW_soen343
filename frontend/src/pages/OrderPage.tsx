@@ -31,7 +31,7 @@ interface FormData {
   senderAddress: string;
   recipientName: string;
   recipientAddress: string;
-  recipientPhone: number;
+  recipientPhone: string;
   packageWeight: number;
   packageHeight: number;
   packageWidth: number;
@@ -70,11 +70,11 @@ const OrderPage = () => {
     senderAddress: '',
     recipientName: '',
     recipientAddress: '',
-    recipientPhone: 0,
-    packageWeight: 0,
-    packageHeight: 0,
-    packageWidth: 0,
-    packageLength: 0,
+    recipientPhone: '',
+    packageWeight: 1,
+    packageHeight: 10,
+    packageWidth: 10,
+    packageLength: 10,
     chosenDeliveryDate: '',
     chosenShippingPrice: 0,
     deliveryMethod: '',
@@ -86,9 +86,10 @@ const OrderPage = () => {
     distance: null,
     ecoPoints: 0
   });
-  const [phoneError, setPhoneError] = useState<string | null>(null);
+  // const [phoneError, setPhoneError] = useState<string | null>(null);
   const [senderAddressError, setSenderAddressError] = useState<string | null>(null);
   const [recipientAddressError, setRecipientAddressError] = useState<string | null>(null);
+  const [PhoneNumError, setPhoneNumError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Main form data change handler
@@ -99,23 +100,45 @@ const OrderPage = () => {
       [field]: value,
     }));
   };
-  const validatePhoneNumber = () => {
-    const phoneString = formData.recipientPhone.toString();
-    if (phoneString.length !== 10) {
-      setPhoneError('Recipient phone number must be exactly 10 digits and follow the format above.');
-      return false;
+
+  // const validatePhoneNumber = () => {
+  //   const phoneString = formData.recipientPhone.toString();
+  //   if (phoneString.length !== 10) {
+  //     setPhoneError('Recipient phone number must be exactly 10 digits and follow the format above.');
+  //     return false;
+  //   }
+  //   setPhoneError(null);
+  //   return true;
+  // };
+
+  const handlePhoneNumChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
+    let value = e.currentTarget.value.replace(/\D/g, ""); // Remove non-digit characters
+
+    if (value.length > 11) {
+      value = value.slice(0, 10); // Limit to 16 digits
+      console.log("VALUE TOO LONG");
     }
-    setPhoneError(null);
-    return true;
+
+    const formattedValue = value
+      .replace(/\D/g, "") // Remove all non-digit characters
+      .replace(/(\d)(\d{3})?(\d{3})?(\d{4})?$/, (_, p1, p2, p3, p4) =>
+        [p1, p2, p3, p4].filter(Boolean).join(" ")
+      ); // Add spaces at the correct positions
+
+    setPhoneNumError(
+      isBlur && value.length < 11 ? "This is not a valid phone number" : null
+    );
+
+    setFormData((prev) => ({ ...prev, recipientPhone: formattedValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate phone number before continuing
-    if (!validatePhoneNumber()) {
-      return;
-    }
+    // // Validate phone number before continuing
+    // if (!validatePhoneNumber()) {
+    //   return;
+    // }
 
 
 
@@ -337,7 +360,6 @@ Eco shipping is environmentally friendly and balances cost and delivery time.`;
       <Title order={1} ta="center" mt="md" mb="xl">
         Package Delivery Order
       </Title>
-
       <Paper shadow="xs" p="md">
         <form onSubmit={handleSubmit}>
           <Stack gap="md">
@@ -398,40 +420,47 @@ Eco shipping is environmentally friendly and balances cost and delivery time.`;
               </div>
             )}
             <TextInput
-              label="Recipient Phone (format: 1231231234)"
+              label="Recipient Phone (format: 1 234 567 890)"
               required
-              value={formData.recipientPhone.toString()}
-              onChange={(e) => handleInputChange('recipientPhone', Number(e.currentTarget.value))}
-              error={phoneError}
+              value={formData.recipientPhone}
+              // onChange={(e) => handleInputChange('recipientPhone', Number(e.currentTarget.value))}
+              error={PhoneNumError}
+              onInput={(e) => handlePhoneNumChange(e, false)}
+              onBlur={(e) => handlePhoneNumChange(e, true)}
+              placeholder='1 234 567 890'
             />
             <NumberInput
               label="Package Weight (kg)"
               required
-              min={0}
+              min={1}
               value={formData.packageWeight}
+              placeholder='1'
               onChange={(value) => handleInputChange('packageWeight', value || 0)}
             />
             <NumberInput
               label="Package Width (cm)"
               required
-              min={0}
+              min={10}
               value={formData.packageWidth}
+              placeholder='10'
               onChange={(value) => handleInputChange('packageWidth', value || 0)}
             />
             <NumberInput
               label="Package Length (cm)"
               required
-              min={0}
+              min={10}
               value={formData.packageLength}
+              placeholder='10'
               onChange={(value) => handleInputChange('packageLength', value || 0)}
             />
             <NumberInput
               label="Package Height (cm)"
               required
-              min={0}
+              min={10}
               value={formData.packageHeight}
+              placeholder='10'
               onChange={(value) => handleInputChange('packageHeight', value || 0)}
-            />
+            />            
             <Group>
               <Select
                 label="Delivery Method"
