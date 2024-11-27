@@ -36,6 +36,7 @@ class Order(db.Model):
     customerId = db.Column(db.String(32), db.ForeignKey('customers.id'), nullable=False, index=True)
     # relationship to order, i think it will make it easier to query the order details
     customer = db.relationship('Customer', backref='orders', lazy=True)
+    review = db.Column(db.String(1000), nullable=True)
 
 class DeliveryTypeEnum(Enum):
     STANDARD = "standard"
@@ -55,12 +56,18 @@ class OrderDetails(db.Model):
     deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
     specialInstructions = db.Column(db.String(500), nullable=True)
     distance = db.Column(db.String(50), nullable=True)
-    
+
+class DeliveryStatusEnum(Enum):
+    PENDING = "Pending"
+    SHIPPED = "Shipped"
+    IN_TRANSIT = "In Transit"
+    OUT_FOR_DELIVERY = "Out for Delivery"
+    DELIVERED = "Delivered"
    
 class TrackingDetails(db.Model):
     __tablename__ = 'trackingDetails'
     trackingNumber = db.Column(db.String(32), db.ForeignKey('orders.trackingNumber'), primary_key=True)
     lastRegisteredLocation = db.Column(db.String(100), nullable=False)
     estimatedDeliveryTime = db.Column(db.String(100), nullable=True)
-    status = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.Enum(*[e.value for e in DeliveryStatusEnum]), nullable=False)
     deliveryPersonNumber = db.Column(db.Integer, nullable=True)

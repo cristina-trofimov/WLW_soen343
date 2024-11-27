@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import Blueprint, request, jsonify, current_app
-from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum, TrackingDetails
+from models import DeliveryStatusEnum, db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum, TrackingDetails
 import json
 from endpoints.auth import get_current_user
 
@@ -79,16 +79,13 @@ def create_order():
             specialInstructions=special_instructions,
             distance=distance
         )
-        
-        
-
         db.session.add(new_order_details)
         db.session.commit()
         
         new_tracking_details = TrackingDetails(
             trackingNumber=new_order.trackingNumber,
             lastRegisteredLocation='Warehouse',
-            status='In transit', 
+            status=DeliveryStatusEnum.PENDING.value,
             estimatedDeliveryTime=new_order_details.chosenDeliveryDate
         )
         
@@ -143,6 +140,7 @@ def get_all_orders():
             
             # Get the related order details (could be multiple)
             order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            tracking_details = TrackingDetails.query.filter_by(trackingNumber=orders.trackingNumber).all()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -167,7 +165,11 @@ def get_all_orders():
                     'specialInstructions': detail.specialInstructions,
                     'distance': detail.distance,
                 } for detail in order_details],
-                'customerId': order.customerId
+                'customerId': order.customerId,
+                'review': order.review,
+                'trackingDetails': {
+                    'status': tracking_details.status
+                }
             })
         
         return jsonify(orders_list), 200
@@ -195,9 +197,12 @@ def get_current_user_orders():
         for order in orders:
             # Get the related package
             package = Package.query.get(order.packageId)
+
+            print(order.trackingNumber)
             
             # Get the related order details (assume there is only one related detail per order)
             order_detail = OrderDetails.query.filter_by(orderId=order.trackingNumber).first()
+            tracking_details = TrackingDetails.query.filter_by(trackingNumber=order.trackingNumber).first()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -222,10 +227,43 @@ def get_current_user_orders():
                     'specialInstructions': order_detail.specialInstructions,
                     'distance': order_detail.distance,
                 } if order_detail else None,
-                'customerId': order.customerId
+                'customerId': order.customerId,
+                'review': order.review, 
+                'trackingDetails': {
+                    'status': tracking_details.status
+                }
             })
+
+            print("MERDE A LA FIN", order.review)
         
         return jsonify(orders_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@order.route('/submit_review', methods=['POST'])
+def submit_review():
+    try:
+
+        trackingNumber = request.json["orderId"]
+        review = request.json["review"]
+
+        print("ORDER ID", trackingNumber)
+        print("REVIEW", review)
+
+        order = Order.query.filter_by(trackingNumber=trackingNumber).first()
+
+        print(order)
+
+        if not order:
+            return jsonify({"message": "There is no such order"}), 200
+
+        # add the review to order
+        order.review = review
+
+        db.session.flush()  # This forces the changes to be written to the database
+        db.session.commit()
+
+
+        return jsonify({"message": "Review submitted"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

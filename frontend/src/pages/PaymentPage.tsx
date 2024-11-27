@@ -25,6 +25,7 @@ interface PaymentFormData {
 
 interface LocationState {
   state?: {
+    trackingNumber ?: String;
     senderName?: String;
     senderAddress?: String;
     receiverName?: String;
@@ -115,16 +116,6 @@ const PaymentPage = () => {
     setFormData((prev) => ({ ...prev, cvv: numericValue }));
   };
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   console.log("Payment submitted:", formData);
-  //   navigate("/home");
-  //   // Send to payment processor
-
-
-
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Payment submitted:", formData);
@@ -137,8 +128,8 @@ const PaymentPage = () => {
         cvv: formData.cvv,
       });
       console.log("Payment successful:", response.data);
-      // MISSING TRACKING NUMBER
-    navigate("/order/review", { state: {trackingNum: "", senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
+
+    navigate("/order/review", { state: {trackingNum: location.state?.trackingNumber, senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
                                 receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount } });
     } catch (error) {
       console.log(error)

@@ -58,3 +58,22 @@
 .order-details {
     margin-top: 20px;
 }
+
+.review-order {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+}
+
+.review-button {
+    align-self: center; /* Center the button horizontally */
+}
+
+.review-editor {
+    display: flex;
+    flex-direction: column; /* Stack textarea and button */
+}
+
+.review-editor textarea {
+    width: 100%; /* Ensure textarea fills available width */
+    resize: none; /* Prevent manual resizing */
+}

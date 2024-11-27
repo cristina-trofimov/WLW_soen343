@@ -13,11 +13,8 @@ import {
 import axiosClient from '../axiosClient';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { DrawerProps } from '../interface/drawerProp';
 
-interface DrawerProps {
-  opened: boolean;
-  onClose: () => void;
-}
 
 const LoginRegisterDrawer: React.FC<DrawerProps> = ({ opened, onClose }) => {
   const [activeTab, setActiveTab] = useState<string | null>('login');
