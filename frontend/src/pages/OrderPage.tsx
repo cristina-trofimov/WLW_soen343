@@ -123,10 +123,23 @@ const OrderPage = () => {
         // Handle successful response
         console.log('Order placed successfully!');
 
-        // navigate to PaymentPage with the amount = calculatedAmount
+        // Extract tracking number from the response
+        const { trackingNumber } = response.data;
+
+        // Calculate amount from formData
         const calculatedAmount = formData.chosenShippingPrice;
-        navigate("/order/payment", { state: {senderName: formData.senderName, senderAddress: formData.senderAddress,
-                                             receiverName: formData.recipientName, receiverAddress: formData.recipientAddress, amount: calculatedAmount } });
+
+        // Navigate to PaymentPage with required data
+        navigate("/order/payment", {
+            state: {
+                trackingNumber: trackingNumber,
+                senderName: formData.senderName,
+                senderAddress: formData.senderAddress,
+                receiverName: formData.recipientName,
+                receiverAddress: formData.recipientAddress,
+                amount: calculatedAmount,
+            },
+        });
       } else {
         // Handle server-side errors
         console.error('Failed to place order:', response.statusText);
