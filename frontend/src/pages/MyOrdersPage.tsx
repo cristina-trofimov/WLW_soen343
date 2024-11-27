@@ -36,6 +36,11 @@ interface Order {
     orderDetails: OrderDetail;
     customerId: number;
     review: string;
+    trackingDetails: TrackingDetails;
+}
+
+interface TrackingDetails {
+    status: string;
 }
 
 // Date formatter
@@ -74,26 +79,24 @@ const MyOrdersPage: React.FC = () => {
         const fetchOrders = async () => {
             try {
                 const response = await axiosClient.get('/get_current_user_orders');
-    
                 if (response.status === 200) {
-                    // Ensure orders is always an array
-                    const fetchedOrders = Array.isArray(response.data) ? response.data : [];
-                    setOrders(fetchedOrders as Order[]);
-                } else {
-                    console.log('Failed to retrieve orders: ', response.statusText);
-                    setOrders([]); // Fallback to an empty array
+                    // success
+                    console.log('Orders retrieved successfully!');
+                    setOrders(response.data as Order[]);
                 }
+                else {
+                    // error
+                    console.log('Failed to retrieve orders: ', response.statusText);
+                }
+                setError(null);
             } catch (err: any) {
                 setError(err.response?.data?.error || 'An error occurred while fetching your orders.');
-                setOrders([]); // Fallback to an empty array on error
             } finally {
                 setLoading(false);
             }
         };
-    
         fetchOrders();
-    }, []);    
-
+    }, []);
     // Log the orders state after it has been updated
     useEffect(() => {
         if (orders.length > 0) {
@@ -105,7 +108,9 @@ const MyOrdersPage: React.FC = () => {
                 console.log('Chosen Delivery Time:', order.orderDetails.chosenDeliveryTime);
                 console.log('Sender Name:', order.orderDetails.senderName);
                 console.log('Recipient Name:', order.orderDetails.recipientName);
-                console.log('Review:', order.review);
+                console.log('Review: ', order.review);
+                console.log('Tracking Details:', order.trackingDetails);
+                console.log('Status; ', order.trackingDetails.status);
             });
         }
     }, [orders]);
@@ -210,7 +215,6 @@ const MyOrdersPage: React.FC = () => {
     if (loading) {
         return <div>Loading...</div>;
     }
-
     if (error) {
         return <div className="error-message">{error}</div>;
     }
@@ -223,23 +227,21 @@ const MyOrdersPage: React.FC = () => {
             {orders.length === 0 ? (
                 <p className="no-orders">You have no orders.</p>
             ) : (
-                // Check if orders is an array before calling .map()
-                Array.isArray(orders) && orders.map((order) => (
-                    <Card 
-                        key={order.trackingNumber} 
-                        className="order-card" 
-                        shadow="lg" 
-                        padding="lg" 
-                        radius="md" 
-                        withBorder 
+                orders.map((order) => (
+                    <Card
+                        key={order.trackingNumber}
+                        className="order-card"
+                        shadow="lg"
+                        padding="lg"
+                        radius="md"
+                        withBorder
                         mb="md">
-                        
                         <h2 className="tracking-number">
                             Tracking Number: {order.trackingNumber}
                         </h2>
-
-                        {order.orderDetails && (
+                        {order.orderDetails && order.orderDetails && (
                             <div className="order-details">
+                                {/* Price and Delivery Date */}
                                 <div className="price-delivery">
                                     <p><strong>Price:</strong> ${order.price}</p>
                                     <p>
@@ -290,34 +292,33 @@ const MyOrdersPage: React.FC = () => {
                                         </>
                                     )}
                                 </div>
-
+                                {/* Sender and Recipient Info in two columns */}
                                 <div className="order-info-container">
                                     <div className="sender-info">
                                         <p><strong>Sender:</strong> {order.orderDetails.senderName}</p>
                                         <p><strong>Sender Address:</strong> {order.orderDetails.senderAddress}</p>
                                     </div>
-
                                     <div className="recipient-info">
                                         <p><strong>Recipient:</strong> {order.orderDetails.recipientName}</p>
                                         <p><strong>Recipient Address:</strong> {order.orderDetails.recipientAddress}</p>
                                     </div>
                                 </div>
-                                
-                                <div className="review-order">
-                                {order.review ? (
-                                        <div className="review-text">
-                                            <p><strong>Your Review:</strong></p>
-                                            <p>{order.review}</p>
-                                        </div>
-                                    ) : (
-                                        // If there's no review, show the button to submit a review
-                                        <Button
-                                            onClick={() => handleReviewClick(order)}
-                                            disabled={new Date(order.orderDetails.chosenDeliveryDate) > new Date()} // Disable if the delivery date hasn't passed
-                                        >
-                                            Submit a Review
-                                        </Button>
-                                    )}
+
+                                <div className="review-order">{order.review ? (
+                                    <div className="review-text">
+                                        <p><strong>Your Review:</strong></p>
+                                        <p>{order.review}</p>
+                                    </div>
+                                ) : (
+                                    // If there's no review, show the button to submit a review
+                                    <Button className="review-button"
+                                        onClick={() => handleReviewClick(order)}
+                                        disabled={order.trackingDetails.status != "Delivered"} // Disable if the delivery date hasn't passed
+                                    >
+                                        Submit a Review
+                                    </Button>
+
+                                )}
 
                                     {/* Conditionally render the review editor if editing */}
                                     {editingOrder?.orderDetails.id === order.orderDetails.id && !order.review && (
@@ -336,7 +337,7 @@ const MyOrdersPage: React.FC = () => {
                                     )}
 
                                     {/* Show a message if the delivery date hasn't passed */}
-                                    {new Date(order.orderDetails.chosenDeliveryDate) > new Date() && !order.review && (
+                                    {order.trackingDetails.status != "Delivered" && !order.review && (
                                         <p className="disabled-message">You have to wait until the delivery is completed to leave a review.</p>
                                     )}
                                 </div>
@@ -346,7 +347,6 @@ const MyOrdersPage: React.FC = () => {
                 ))
             )}
         </Container>
-    ); 
+    );
 };
-
 export default MyOrdersPage;
