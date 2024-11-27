@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import Blueprint, request, jsonify, current_app
-from models import db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum, TrackingDetails
+from models import DeliveryStatusEnum, db, Customer, Package, Order, OrderDetails, DeliveryTypeEnum, TrackingDetails
 import json
 from endpoints.auth import get_current_user
 
@@ -79,16 +79,13 @@ def create_order():
             specialInstructions=special_instructions,
             distance=distance
         )
-        
-        
-
         db.session.add(new_order_details)
         db.session.commit()
         
         new_tracking_details = TrackingDetails(
             trackingNumber=new_order.trackingNumber,
             lastRegisteredLocation='Warehouse',
-            status='In transit', 
+            status=DeliveryStatusEnum.PENDING.value,
             estimatedDeliveryTime=new_order_details.chosenDeliveryDate
         )
         
