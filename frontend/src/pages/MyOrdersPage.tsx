@@ -170,7 +170,7 @@ const MyOrdersPage: React.FC = () => {
                                     </div>
                                 ) : (
                                     // If there's no review, show the button to submit a review
-                                    <Button
+                                    <Button className="review-button"
                                         onClick={() => handleReviewClick(order)}
                                         disabled={order.trackingDetails.status != "Delivered"} // Disable if the delivery date hasn't passed
                                     >
