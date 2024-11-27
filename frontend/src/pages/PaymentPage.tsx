@@ -25,7 +25,7 @@ interface PaymentFormData {
 
 interface LocationState {
   state?: {
-    trackingNumber ?: String;
+    trackingNumber?: String;
     senderName?: String;
     senderAddress?: String;
     receiverName?: String;
@@ -77,6 +77,30 @@ const PaymentPage = () => {
     setFormData((prev) => ({ ...prev, cardNumber: formattedValue }));
   };
 
+  // const handleExpDateChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
+  //   let value = e.currentTarget.value.replace(/[^\d/]/g, ""); // Remove non-digit and non-slash characters
+
+  //   if (value.length > 5) {
+  //     value = value.slice(0, 5); // Limit to 5 characters
+  //   }
+
+  //   if (value.length === 2 && !value.includes("/")) {
+  //     value += "/";
+  //   } else if (value.length === 2 && value.includes("/")) {
+  //     value = "0" + value; // Add leading zero if only one digit before slash
+  //   } else if (value.length === 3 && !value.includes("/")) {
+  //     value = value.slice(0, 2) + "/" + value.slice(2);
+  //   }
+
+  //   if (isBlur) {
+  //     if (value.length < 5) {
+  //       value = "0" + value.charAt(0) + "/" + value.charAt(1) + value.charAt(3);
+  //     }
+  //   }
+
+  //   setFormData((prev) => ({ ...prev, expirationDate: value }));
+  // };
+
   const handleExpDateChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
     let value = e.currentTarget.value.replace(/[^\d/]/g, ""); // Remove non-digit and non-slash characters
 
@@ -98,8 +122,35 @@ const PaymentPage = () => {
       }
     }
 
+    // Validate expiration date
+    if (value.length === 5) {
+      const [month, year] = value.split("/").map(Number);
+
+      if (month < 1 || month > 12) {
+        alert("Invalid month. Please enter a valid expiration date.");
+        return;
+      }
+
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear() % 100; // Get last two digits of the current year
+      const currentMonth = currentDate.getMonth() + 1; // Months are zero-indexed
+      const maxYear = currentYear + 4; // Max allowed year (4 years from now)
+
+      if (
+        year < currentYear ||
+        year > maxYear ||
+        (year === currentYear && month < currentMonth)
+      ) {
+        alert("Invalid expiration date. Please enter a date between today and the next 4 years.");
+        return;
+      }
+    }
+
+    e.currentTarget.value = value;
+
     setFormData((prev) => ({ ...prev, expirationDate: value }));
   };
+
 
   const handleCvvChange = (e: React.FormEvent<HTMLInputElement>, isBlur: boolean) => {
     const value = e.currentTarget.value;
@@ -129,8 +180,12 @@ const PaymentPage = () => {
       });
       console.log("Payment successful:", response.data);
 
-    navigate("/order/review", { state: {trackingNum: location.state?.trackingNumber, senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
-                                receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount } });
+      navigate("/order/review", {
+        state: {
+          trackingNum: location.state?.trackingNumber, senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
+          receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount
+        }
+      });
     } catch (error) {
       console.log(error)
     }
