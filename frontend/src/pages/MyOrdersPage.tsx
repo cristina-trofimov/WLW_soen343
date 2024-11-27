@@ -1,7 +1,7 @@
 import './MyOrdersPage.css';
 import axiosClient from "../axiosClient";
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Title } from '@mantine/core';
+import { Card, Container, Title, Button, Textarea } from '@mantine/core';
 
 // Define the types for the order data
 interface Package { // might not need this
@@ -14,6 +14,7 @@ interface Package { // might not need this
 
 interface OrderDetail {
     id: number;
+    theOtherId: number;
     senderName: string;
     senderAddress: string;
     recipientName: string;
@@ -31,12 +32,15 @@ interface Order {
     package: Package;
     orderDetails: OrderDetail;
     customerId: number;
+    review: string;
 }
 
 const MyOrdersPage: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [reviewText, setReviewText] = useState<string>('');
+    const [editingOrder, setEditingOrder] = useState<Order | null>(null); // Track which order is being reviewed
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -71,6 +75,7 @@ const MyOrdersPage: React.FC = () => {
                 console.log('Chosen Delivery Date:', order.orderDetails.chosenDeliveryDate);
                 console.log('Sender Name:', order.orderDetails.senderName);
                 console.log('Recipient Name:', order.orderDetails.recipientName);
+                console.log('Review:', order.review);
             });
         }
     }, [orders]);
@@ -83,6 +88,37 @@ const MyOrdersPage: React.FC = () => {
     if (error) {
         return <div className="error-message">{error}</div>;
     }
+
+    const handleReviewSubmit = async (order: Order) => {
+        try {
+
+            console.log('Submitting review for order:', order.trackingNumber);
+            console.log('Review Text:', reviewText);
+
+            const response = await axiosClient.post('/submit_review', {
+                orderId: order.trackingNumber,
+                review: reviewText,
+            });
+
+            if (response.status === 200) {
+                // Update the order with the new review
+                setOrders((prevOrders) =>
+                    prevOrders.map((o) =>
+                        o.orderDetails.id === order.orderDetails.id ? { ...o, review: reviewText } : o
+                    )
+                );
+                setReviewText(''); // Clear the review input
+                setEditingOrder(null); // Close the review editor
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            setError('Failed to submit review.');
+        }
+    };
+
+    const handleReviewClick = (order: Order) => {
+        setEditingOrder(order);
+    };
 
     return (
         <Container size="sm">
@@ -124,6 +160,44 @@ const MyOrdersPage: React.FC = () => {
                                         <p><strong>Recipient:</strong> {order.orderDetails.recipientName}</p>
                                         <p><strong>Recipient Address:</strong> {order.orderDetails.recipientAddress}</p>
                                     </div>
+                                </div>
+                                
+                                <div className="review-order">
+                                {order.review ? (
+                                        <div className="review-text">
+                                            <p><strong>Your Review:</strong></p>
+                                            <p>{order.review}</p>
+                                        </div>
+                                    ) : (
+                                        // If there's no review, show the button to submit a review
+                                        <Button
+                                            onClick={() => handleReviewClick(order)}
+                                            disabled={new Date(order.orderDetails.chosenDeliveryDate) > new Date()} // Disable if the delivery date hasn't passed
+                                        >
+                                            Submit a Review
+                                        </Button>
+                                    )}
+
+                                    {/* Conditionally render the review editor if editing */}
+                                    {editingOrder?.orderDetails.id === order.orderDetails.id && !order.review && (
+                                        <div className="review-editor">
+                                            <Textarea
+                                                placeholder="Write your review"
+                                                value={reviewText}
+                                                onChange={(e) => setReviewText(e.target.value)}
+                                                autosize
+                                                minRows={4}
+                                            />
+                                            <Button onClick={() => handleReviewSubmit(order)}>
+                                                Submit Review
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    {/* Show a message if the delivery date hasn't passed */}
+                                    {new Date(order.orderDetails.chosenDeliveryDate) > new Date() && !order.review && (
+                                        <p className="disabled-message">You have to wait until the delivery is complete to leave a review.</p>
+                                    )}
                                 </div>
                             </div>
                         )}
