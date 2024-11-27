@@ -25,6 +25,7 @@ interface OrderDetail {
     specialInstructions: string;
     distance: number;
 }
+
 interface Order {
     trackingNumber: string;
     price: number;
