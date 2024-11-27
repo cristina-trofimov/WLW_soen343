@@ -30,6 +30,7 @@ def create_order():
         delivery_method = form_data.get("deliveryMethod")
         special_instructions = form_data.get("specialInstructions")
         distance = form_data.get("distance")
+        eco_points = form_data.get("ecoPoints")
 
         # Validate required fields
         if not all([sender_name, sender_address, recipient_name, recipient_address, recipient_phone, 
@@ -64,6 +65,20 @@ def create_order():
         )
         db.session.add(new_order)
         db.session.commit()  # Commit to assign tracking number
+        
+        
+        # Update customer eco points
+        customer = Customer.query.get(customer_id)
+        
+        if(delivery_method == DeliveryTypeEnum.ECO.value):
+            if(eco_points > 0):
+                customer.ecoPoints += eco_points
+                db.session.flush()
+            else:
+                customer.ecoPoints -= 5
+                db.session.flush()
+                
+        
 
         # Create OrderDetails instance
         new_order_details = OrderDetails(

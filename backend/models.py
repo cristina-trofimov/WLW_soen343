@@ -14,6 +14,7 @@ class Customer(db.Model):
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    ecoPoints = db.Column(db.Integer, nullable=True, default=0)
 
 class Package(db.Model):
     __tablename__ = 'packages'
