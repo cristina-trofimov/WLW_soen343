@@ -272,7 +272,7 @@ def submit_review():
         return jsonify({"message": "Review submitted"}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
 
 @order.route('/modify_delivery_date', methods=['POST'])
 def modify_delivery_date():  
@@ -334,3 +334,32 @@ def modify_delivery_time():
     
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+
+@order.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    try:
+        trackingNumber = request.json["orderId"]
+
+        # Query the order using the trackingNumber
+        order = Order.query.filter_by(trackingNumber=trackingNumber).first()
+        
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        # Query the associated tracking details to update the status
+        tracking_details = TrackingDetails.query.filter_by(trackingNumber=trackingNumber).first()
+
+        if not tracking_details:
+            return jsonify({"error": "Tracking details not found"}), 404
+
+        # Change the status of the order to "Cancelled"
+        tracking_details.status = DeliveryStatusEnum.CANCELLED.value
+
+        # Commit the changes
+        db.session.commit()
+
+        return jsonify({"message": "Order cancelled"}), 200
+    except Exception as e:
+        db.session.rollback()  # Rollback in case of an error
+        return jsonify({'error': str(e)}), 500
