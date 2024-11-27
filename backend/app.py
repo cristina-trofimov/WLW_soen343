@@ -9,6 +9,7 @@ from endpoints.payment import payment_blueprint
 from endpoints.order import order
 from endpoints.tracking import tracking
 from endpoints.contact import contact
+from endpoints.customer import customer
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -28,6 +29,7 @@ app.register_blueprint(payment_blueprint)
 app.register_blueprint(order)
 app.register_blueprint(tracking)
 app.register_blueprint(contact)
+app.register_blueprint(customer)
 
 if __name__ == "__main__":
     app.run(debug=True)
