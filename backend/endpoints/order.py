@@ -140,6 +140,7 @@ def get_all_orders():
             
             # Get the related order details (could be multiple)
             order_details = OrderDetails.query.filter_by(orderId=order.trackingNumber).all()
+            tracking_details = TrackingDetails.query.filter_by(trackingNumber=orders.trackingNumber).all()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -165,7 +166,10 @@ def get_all_orders():
                     'distance': detail.distance,
                 } for detail in order_details],
                 'customerId': order.customerId,
-                'review': order.review
+                'review': order.review,
+                'trackingDetails': {
+                    'status': tracking_details.status
+                }
             })
         
         return jsonify(orders_list), 200
@@ -193,9 +197,12 @@ def get_current_user_orders():
         for order in orders:
             # Get the related package
             package = Package.query.get(order.packageId)
+
+            print(order.trackingNumber)
             
             # Get the related order details (assume there is only one related detail per order)
             order_detail = OrderDetails.query.filter_by(orderId=order.trackingNumber).first()
+            tracking_details = TrackingDetails.query.filter_by(trackingNumber=order.trackingNumber).first()
             
             # Append the order data, along with package and order details
             orders_list.append({
@@ -221,7 +228,10 @@ def get_current_user_orders():
                     'distance': order_detail.distance,
                 } if order_detail else None,
                 'customerId': order.customerId,
-                'review': order.review
+                'review': order.review, 
+                'trackingDetails': {
+                    'status': tracking_details.status
+                }
             })
 
             print("MERDE A LA FIN", order.review)
