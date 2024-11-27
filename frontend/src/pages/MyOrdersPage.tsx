@@ -119,6 +119,41 @@ const MyOrdersPage: React.FC = () => {
         }
     };
 
+    const handleCancelDelivery = async (order: Order) => {
+
+        const confirmCancel = window.confirm(`Are you sure you want to cancel the delivery of order ${order.trackingNumber}?`);
+
+        if (!confirmCancel) {
+            console.log('Order cancellation aborted');
+            return; // Exit the function if the user cancels the action
+        }
+
+        try {
+
+            console.log('Cancelling the delivery:', order.trackingNumber);
+
+            const response = await axiosClient.post('/cancel_order', {
+                orderId: order.trackingNumber,
+            });
+
+            if (response.status === 200) {
+                // Update the order with the new review
+                setOrders((prevOrders) =>
+                    prevOrders.map((o) =>
+                        o.trackingNumber === order.trackingNumber
+                            ? { ...o, trackingDetails: { ...o.trackingDetails, status: 'Cancelled' } }
+                            : o
+                    )
+                );
+
+                console.log('ORDER CANCELLED SUCCESSFULLY:', order.trackingNumber);
+            }
+        } catch (error) {
+            console.error('Error cancelling the order:', error);
+            setError('Failed to cancel the order.');
+        }
+    };
+
     const handleReviewClick = (order: Order) => {
         setEditingOrder(order);
     };
@@ -134,7 +169,7 @@ const MyOrdersPage: React.FC = () => {
                 orders.map((order) => (
                     <Card
                         key={order.trackingNumber}
-                        className="order-card"
+                        className={`order-card ${order.trackingDetails.status === 'Cancelled' ? 'greyed-out' : ''}`}
                         shadow="lg"
                         padding="lg"
                         radius="md"
@@ -162,6 +197,21 @@ const MyOrdersPage: React.FC = () => {
                                         <p><strong>Recipient Address:</strong> {order.orderDetails.recipientAddress}</p>
                                     </div>
                                 </div>
+
+
+                                <div className="cancel-delivery">
+                                    {order.trackingDetails.status === "Pending" && (
+                                        <Button
+                                            className="cancel-button"
+                                            onClick={() => handleCancelDelivery(order)}
+                                            disabled={order.trackingDetails.status !== "Pending"} // Disable if the delivery status isn't "Pending"
+                                        >
+                                            Cancel the delivery
+                                        </Button>
+                                    )}
+                                </div>
+
+
 
                                 <div className="review-order">{order.review ? (
                                     <div className="review-text">
