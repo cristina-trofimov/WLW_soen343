@@ -63,6 +63,7 @@ class DeliveryStatusEnum(Enum):
     IN_TRANSIT = "In Transit"
     OUT_FOR_DELIVERY = "Out for Delivery"
     DELIVERED = "Delivered"
+    CANCELLED = "Cancelled"
    
 class TrackingDetails(db.Model):
     __tablename__ = 'trackingDetails'
