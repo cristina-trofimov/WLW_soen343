@@ -73,6 +73,7 @@ def create_order():
             recipientName=recipient_name,
             recipientAddress=recipient_address,
             recipientPhone=recipient_phone,
+            minDeliveryDate=chosen_delivery_date,
             chosenDeliveryDate=chosen_delivery_date,
             deliveryMethod=delivery_method,
             specialInstructions=special_instructions,
@@ -107,6 +108,7 @@ def create_order():
                 "recipientName": new_order_details.recipientName,
                 "deliveryMethod": new_order_details.deliveryMethod,
                 "chosenDeliveryDate": new_order_details.chosenDeliveryDate,
+                "chosenDeliveryTime": new_order_details.chosenDeliveryTime,
                 "specialInstructions": new_order_details.specialInstructions,
                 "distance": new_order_details.distance
             }
@@ -158,6 +160,7 @@ def get_all_orders():
                     'recipientName': detail.recipientName,
                     'recipientAddress': detail.recipientAddress,
                     'recipientPhone': detail.recipientPhone,
+                    'minDeliveryDate': detail.minDeliveryDate,
                     'chosenDeliveryDate': detail.chosenDeliveryDate,
                     'chosenDeliveryTime': detail.chosenDeliveryTime,
                     'deliveryMethod': detail.deliveryMethod,
@@ -215,6 +218,7 @@ def get_current_user_orders():
                     'recipientName': order_detail.recipientName,
                     'recipientAddress': order_detail.recipientAddress,
                     'recipientPhone': order_detail.recipientPhone,
+                    'minDeliveryDate': order_detail.minDeliveryDate,
                     'chosenDeliveryDate': order_detail.chosenDeliveryDate,
                     'chosenDeliveryTime': order_detail.chosenDeliveryTime,
                     'deliveryMethod': order_detail.deliveryMethod,
@@ -258,3 +262,65 @@ def submit_review():
         return jsonify({"message": "Review submitted"}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@order.route('/modify_delivery_date', methods=['POST'])
+def modify_delivery_date():  
+    # Get form data from the request JSON 
+    data = request.json
+    
+    tracking_number = data.get('trackingNumber')
+    chosenDeliveryDate = data.get('chosenDeliveryDate')
+
+    # Validate inputs
+    if not tracking_number:
+        return jsonify({"status": "error", "message": "Tracking number is required."}), 400
+    
+    try:
+        # Find the tracking details by trackingNumber
+        order_details = OrderDetails.query.filter_by(orderId=tracking_number).one_or_none()
+        
+        if not order_details:
+            return jsonify({"status": "error", "message": "Tracking number not found."}), 404
+        
+        # Update the delivery date
+        order_details.chosenDeliveryDate = chosenDeliveryDate
+        
+        # Commit the changes to the database
+        db.session.commit()
+        
+        return jsonify({"status": "success", "message": "Tracking details updated successfully."}), 200
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+
+@order.route('/modify_delivery_time', methods=['POST'])
+def modify_delivery_time():  
+    # Get form data from the request JSON 
+    data = request.json
+    
+    tracking_number = data.get('trackingNumber')
+    chosenDeliveryTime = data.get('chosenDeliveryTime')
+
+    # Validate inputs
+    if not tracking_number:
+        return jsonify({"status": "error", "message": "Tracking number is required."}), 400
+    
+    try:
+        # Find the tracking details by trackingNumber
+        order_details = OrderDetails.query.filter_by(orderId=tracking_number).one_or_none()
+        
+        if not order_details:
+            return jsonify({"status": "error", "message": "Tracking number not found."}), 404
+        
+        # Update the delivery date
+        order_details.chosenDeliveryTime = chosenDeliveryTime
+        
+        # Commit the changes to the database
+        db.session.commit()
+        
+        return jsonify({"status": "success", "message": "Tracking details updated successfully."}), 200
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
