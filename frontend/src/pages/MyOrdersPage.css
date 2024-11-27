@@ -77,3 +77,14 @@
     width: 100%; /* Ensure textarea fills available width */
     resize: none; /* Prevent manual resizing */
 }
+
+.custom-date-picker {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto; /* Horizontal centering */
+    text-align: center; /* Align text */
+}
+
+.small-edit-button {
+    margin-left: 16px;
+}
