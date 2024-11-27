@@ -249,7 +249,7 @@ const MyOrdersPage: React.FC = () => {
                                         <strong>Delivery Expected By:</strong> {order.orderDetails.chosenDeliveryDate}{' '}
                                         <Button size="xs" 
                                             onClick={() => setEditingDateOrder(order.trackingNumber)}
-                                            disabled={order.trackingDetails.status == "Delivered"}
+                                            disabled={order.trackingDetails.status == "Delivered" || order.trackingDetails.status == "Out for Delivery"}
                                             className="small-edit-button">   
                                             Edit
                                         </Button>
@@ -276,7 +276,7 @@ const MyOrdersPage: React.FC = () => {
                                         <strong>At Time:</strong> {order.orderDetails.chosenDeliveryTime}{' '}
                                         <Button size="xs" 
                                             onClick={() => setEditingTimeOrder(order.trackingNumber)}
-                                            disabled={order.trackingDetails.status == "Delivered"}
+                                            disabled={order.trackingDetails.status == "Delivered" || order.trackingDetails.status == "Out for Delivery"}
                                             className="small-edit-button">
                                             Edit
                                         </Button>
