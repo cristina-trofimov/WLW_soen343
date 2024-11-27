@@ -266,7 +266,7 @@ const OrderPage = () => {
 
     // Basic calculation for volume and weight-based price (sample formula)
     const volume = formData.packageHeight * formData.packageWidth * formData.packageLength; // Volume in cubic units
-    const basePrice = volume * 0.10 + formData.packageWeight * 0.25 + 5 + 0.90 * distance; // Price formula
+    const basePrice = volume * 0.10 + formData.packageWeight * 0.10 + 0.001 * distance; // Price formula
 
     // Calculate prices for each shipping method
     const regularPrice = basePrice;
@@ -280,7 +280,7 @@ const OrderPage = () => {
           parseFloat(ecoPrice.toFixed(2));
 
     if (discountApplied) {
-      formData.chosenShippingPrice = formData.chosenShippingPrice * 0.85;
+      formData.chosenShippingPrice = parseFloat((formData.chosenShippingPrice * 0.85).toFixed(2));
     }
   };
 

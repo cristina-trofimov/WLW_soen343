@@ -57,7 +57,7 @@ function OrderConfirmation() {
           
           <Text fw={700} size="lg">Total: ${orderDetails.total.toFixed(2)}</Text>
           
-          <Button>Track Your Order</Button>
+          <Button onClick={() => navigate("/home")}>Track Your Order</Button>
         </Stack>
       </Paper>
     </Container>
