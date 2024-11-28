@@ -1,30 +1,13 @@
 import { Container, Paper, Title, Text, Stack, Button } from '@mantine/core';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { LocationState } from '../interface/LocationState';
+import { ConfirmationPageDetails } from '../interface/ConfirmationPageDetails';
 
-interface LocationState {
-  state?: {
-    trackingNum?: String;
-    senderName?: String;
-    senderAddress?: String;
-    receiverName?: String;
-    receiverAddress?: String;
-    total?: number;
-  };
-}
-
-interface OrderDetails {
-  trackingNum: String;
-  senderName: String;
-  senderAddress: String;
-  receiverName: String;
-  receiverAddress: String;
-  total: number;
-}
 
 function OrderConfirmation() {
   const location = useLocation() as LocationState;
-  const [orderDetails, setOrderDetails] = useState<OrderDetails>({
+  const [orderDetails, setOrderDetails] = useState<ConfirmationPageDetails>({
     trackingNum: location.state?.trackingNum ?? "12345",
     senderName: location.state?.senderName ?? "Potate Sender",
     senderAddress: location.state?.senderAddress ?? "234 kdek avenue",
@@ -34,11 +17,6 @@ function OrderConfirmation() {
   });
   
   const navigate = useNavigate();
-
-  const trackOrder = () => {
-    // Navigate to tracking page using tracking number
-    navigate("");
-  }
 
   return (
     <Container size="sm" my="xl">

@@ -19,34 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import './OrderPage.css';
 import Discount from '../components/Discount';
 import { Customer } from '../interface/customer';
-
-type Suggestion = {
-  display_name: string;
-  lat: string;
-  lon: string;
-};
-
-interface FormData {
-  senderName: string;
-  senderAddress: string;
-  recipientName: string;
-  recipientAddress: string;
-  recipientPhone: string;
-  packageWeight: number;
-  packageHeight: number;
-  packageWidth: number;
-  packageLength: number;
-  chosenDeliveryDate: string;
-  chosenShippingPrice: number
-  deliveryMethod: string;
-  specialInstructions: string;
-  senderAddressCoords: [number, number] | null;
-  recipientAddressCoords: [number, number] | null;
-  senderAddressSuggestions: Suggestion[];
-  recipientAddressSuggestions: Suggestion[];
-  distance: string | null;
-  ecoPoints: number
-}
+import { OrderingPageFormData } from '../interface/OrderingPageFormData';
+import { Suggestion } from '../interface/Suggestion';
 
 const OrderPage = () => {
 
@@ -65,7 +39,7 @@ const OrderPage = () => {
     fetchCustomer();
   }, []);
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<OrderingPageFormData>({
     senderName: '',
     senderAddress: '',
     recipientName: '',
@@ -94,7 +68,7 @@ const OrderPage = () => {
 
   // Main form data change handler
 
-  const handleInputChange = (field: keyof FormData, value: any) => {
+  const handleInputChange = (field: keyof OrderingPageFormData, value: any) => {
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,

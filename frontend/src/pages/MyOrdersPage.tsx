@@ -3,45 +3,8 @@ import axiosClient from "../axiosClient";
 import React, { useEffect, useState } from 'react';
 import { Card, Container, Title, Button, Textarea } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
+import { Order } from '../interface/Order';
 
-// Define the types for the order data
-interface Package {
-    id: number;
-    weight: number;
-    length: number;
-    width: number;
-    height: number;
-}
-
-interface OrderDetail {
-    id: number;
-    theOtherId: number;
-    senderName: string;
-    senderAddress: string;
-    recipientName: string;
-    recipientAddress: string;
-    recipientPhone: string;
-    minDeliveryDate: string;
-    chosenDeliveryDate: string;
-    chosenDeliveryTime: string;
-    deliveryMethod: string;
-    specialInstructions: string;
-    distance: number;
-}
-
-interface Order {
-    trackingNumber: string;
-    price: number;
-    package: Package;
-    orderDetails: OrderDetail;
-    customerId: number;
-    review: string;
-    trackingDetails: TrackingDetails;
-}
-
-interface TrackingDetails {
-    status: string;
-}
 
 // Date formatter
 const formatDate = (date: Date | string): string => {

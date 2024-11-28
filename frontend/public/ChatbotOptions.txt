@@ -1,0 +1,35 @@
+Order Placement, cost, and Confirmation
+    How much will it cost to ship my order?
+        To determine the exact cost of shipping your packages, I recommend using the quote service at http://localhost:5173/quote. Fill out the form and click on "Check Quote".
+    How do I place an order?
+        Go to the order placement page by clicking on this link: Place Order(http://localhost:5173/order/place). Fill out the form, make sure your information are accurate. After placing your order, you'll need to make a payment. Once your order is successfully placed and payment is made, you will receive an email confirmation with all the details of your order, including tracking information.
+    Will I receive a confirmation after placing my order?
+        Yes, once your order is successfully placed, you will receive an email confirmation with the details of your order and tracking information.
+Package Restrictions
+    Are there any restrictions on what I can ship?
+        Yes, the company does not ship hazardous materials, perishables, or live animals. Additionally, only one package is allowed per order.
+Order Modifications and Cancellations
+    Can I modify my order after it has been shipped?
+        You can edit the delivery date and time whlile the order is pending. However, once an order has been dispatched, modifications are not allowed. Customers should ensure their orders are correct before shipping.
+    Can I cancel my order?
+        Orders can only be canceled when they are pending. Once they have been processed for shipping, they can no longer be deleted
+Delayed Shipments and Damages
+    What happens if my package is delayed?
+        While the company strives to meet delivery timelines, delays may occur due to unforeseen circumstances. Customers are encouraged to track their shipments for updates.
+    How does the company handle damaged or lost packages?
+        The company does not currently offer insurance for shipments. In cases of damage or loss, customers may not receive compensation.
+Shipping Methods and Delivery Times
+    What shipping options are available?
+        The company offers three shipping methods:
+            Express Delivery: Approximately 2 days. It is the fastest delivery and ideal for time-sensitive packages.
+            Regular Delivery: Approximately 7 days. The most cost effective.
+            Eco Delivery: Approximately 10 days. The most environmentally friendly, support green shipping practices.
+    How long does it take to process an order?
+        Orders are typically processed within one business day, but this may vary based on order volume.
+Tracking and Rewards Program
+    How can I check the status of my order?
+        You can check the status of your order by clicking on the tracking link provided in your confirmation email or by logging into your account on our website.
+    When can I start tracking my order?
+        Tracking begins as soon as the order is placed, allowing customers to monitor their shipment's progress.
+    Is there a rewards program for shipping?
+        Yes, for every $10 spent on eco delivery, customers accumulate points that can be redeemed for discounts on future shipments.

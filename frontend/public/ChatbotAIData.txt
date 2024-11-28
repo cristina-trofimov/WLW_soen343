@@ -1,0 +1,31 @@
+http://localhost:5173/home
+http://localhost:5173/quote => to know how much it will cost to ship something
+http://localhost:5173/contact-us => to talk to a representative if not satisfied with bot's answers
+http://localhost:5173/order/place => to place a shipping order (fill out the form and click on the "Place Order button")
+http://localhost:5173/order/payment => to pay for the order
+http://localhost:5173/order/review => confirms that the order was place, the sender's name and address as well as the receiver's name and address
+http://localhost:5173/my-orders => to view all the orders previously made by this user
+
+Services
+Regular shipping is cost-effective and usually takes longer to deliver, making it ideal for non-urgent deliveries. This option typically consolidates packages, reducing the number of trips and overall fuel consumption. While slower, regular shipping often has a lower environmental impact compared to faster options, as it prioritizes efficiency over speed. Perfect for those who value sustainability and don’t mind waiting a few extra days.
+Express shipping delivers faster at a higher cost, making it a great choice for urgent deliveries. However, the speed comes at an environmental cost, as it often requires additional trips, less efficient routing, and sometimes air transportation. Despite its environmental footprint, express shipping is invaluable for time-sensitive packages like gifts or critical business shipments. To mitigate the impact, many companies are working toward carbon-offset programs for express services.
+Eco shipping is environmentally friendly, balancing cost and delivery time. It emphasizes green practices such as using electric vehicles, optimizing delivery routes, and consolidating shipments to reduce carbon emissions. While slightly slower than express shipping, eco shipping is a responsible choice for those who care about sustainability. This option supports efforts to combat climate change while still providing reliable service for most delivery needs.
+Regular takes around 7 days, Express around 2 and eco around 10
+No, orders can only be canceled when they are pending. Once they have been processed for shipping, they can no longer be deleted
+Policies
+Prohibited Items
+Hazardous Materials: The company strictly prohibits the shipment of hazardous materials, including chemicals, flammable items, and any goods classified as dangerous. Compliance with all relevant regulations is mandatory, and failure to adhere can result in severe penalties12.
+Perishables: Items that can spoil or deteriorate, such as food and plants, are not accepted for shipment. This includes live animals and any products requiring specific temperature controls23.
+Live Animals: The shipment of live animals is not permitted under any circumstances.
+Order Modifications and Cancellations
+No Modifications After Shipping: Once an order has been dispatched, modifications are not allowed. Customers must ensure their orders are correct before shipping.
+No Order Cancellations: Orders cannot be canceled once they have been processed for shipping.
+Package Limitations
+Each order is limited to a single package. Customers must place separate orders for additional packages.
+Shipping Delays and Damages
+While the company aims to deliver packages within the specified time frames, delays may occur due to unforeseen circumstances. Customers are advised to track their shipments for updates.
+The company does not currently offer insurance for shipments. In the event of damage or loss, customers may not be eligible for compensation.
+Tracking begins as soon as the order is placed, allowing customers to monitor their shipment's progress.
+For every $10 spent on eco delivery, customers accumulate points that can be redeemed for discounts on future shipments.
+once your order is successfully placed, you will receive an email confirmation with the details of your order and tracking information.
+You can check the status of your order by clicking on the tracking link provided in your confirmation email, by logging into your account, or by entering the tracking number on our website
