@@ -11,7 +11,7 @@ Regular shipping is cost-effective and usually takes longer to deliver, making i
 Express shipping delivers faster at a higher cost, making it a great choice for urgent deliveries. However, the speed comes at an environmental cost, as it often requires additional trips, less efficient routing, and sometimes air transportation. Despite its environmental footprint, express shipping is invaluable for time-sensitive packages like gifts or critical business shipments. To mitigate the impact, many companies are working toward carbon-offset programs for express services.
 Eco shipping is environmentally friendly, balancing cost and delivery time. It emphasizes green practices such as using electric vehicles, optimizing delivery routes, and consolidating shipments to reduce carbon emissions. While slightly slower than express shipping, eco shipping is a responsible choice for those who care about sustainability. This option supports efforts to combat climate change while still providing reliable service for most delivery needs.
 Regular takes around 7 days, Express around 2 and eco around 10
-
+No, orders can only be canceled when they are pending. Once they have been processed for shipping, they can no longer be deleted
 Policies
 Prohibited Items
 Hazardous Materials: The company strictly prohibits the shipment of hazardous materials, including chemicals, flammable items, and any goods classified as dangerous. Compliance with all relevant regulations is mandatory, and failure to adhere can result in severe penalties12.
