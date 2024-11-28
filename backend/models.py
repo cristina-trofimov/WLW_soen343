@@ -14,6 +14,7 @@ class Customer(db.Model):
     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    ecoPoints = db.Column(db.Integer, nullable=True, default=0)
 
 class Package(db.Model):
     __tablename__ = 'packages'
@@ -52,7 +53,9 @@ class OrderDetails(db.Model):
     recipientName = db.Column(db.String(100), nullable=False)
     recipientAddress = db.Column(db.String(255), nullable=False)
     recipientPhone = db.Column(db.Integer, nullable=False)
+    minDeliveryDate = db.Column(db.String(100), nullable=True)
     chosenDeliveryDate = db.Column(db.String(100), nullable=True)
+    chosenDeliveryTime = db.Column(db.String(100), nullable=True, default="12:00 AM")
     deliveryMethod = db.Column(db.Enum(*[e.value for e in DeliveryTypeEnum]), nullable=False)
     specialInstructions = db.Column(db.String(500), nullable=True)
     distance = db.Column(db.String(50), nullable=True)
@@ -63,6 +66,7 @@ class DeliveryStatusEnum(Enum):
     IN_TRANSIT = "In Transit"
     OUT_FOR_DELIVERY = "Out for Delivery"
     DELIVERED = "Delivered"
+    CANCELLED = "Cancelled"
    
 class TrackingDetails(db.Model):
     __tablename__ = 'trackingDetails'
