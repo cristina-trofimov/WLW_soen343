@@ -9,8 +9,8 @@ const chatOptions: ChatbotOption[] = [
     id: "1",
     section: "Order Placement, cost, and Confirmation",
     subOptions: [
-      { id: "1", question: "How much will it cost to ship my order?", response: "To determine the exact cost of shipping your packages, I recommend using the <a href='/quote'>quote service</a>. Fill out the form and click on 'Check Quote'." },
-      { id: "2", question: "How do I place an order?", response: "Go to the order placement page by clicking on <a href='/order/place'>here</a>. Fill out the form, make sure your information are accurate. After placing your order, you'll need to make a payment. Once your order is successfully placed and payment is made, you will receive an email confirmation with all the details of your order, including tracking information." },
+      { id: "1", question: "How much will it cost to ship my order?", response: "To determine the exact cost of shipping your packages, click on 'Quotation' in the header, fill out the form and click on the 'Check Quote' button." },
+      { id: "2", question: "How do I place an order?", response: "In the header, click on 'Shipping', which will direct you to the form to place your order. Fill out the form, make sure your information are accurate. After placing your order, you'll need to make a payment. Once your order is successfully placed and payment is made, you will receive an email confirmation with all the details of your order, including tracking information." },
       { id: "3", question: "Will I receive a confirmation after placing my order?", response: "Yes, once your order is successfully placed, you will receive an email confirmation with the details of your order and tracking information." },
       { id: "4", question: "Back", response: "" }
     ]
