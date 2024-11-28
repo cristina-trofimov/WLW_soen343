@@ -97,7 +97,6 @@ const ChatbotPopup = () => {
     setMessages([...messages, userMessage]);
     setInput("");
 
-{/* <a href='url'>here</a> */}
     const inputValue = input.replace(/\D/g, "");
     if (inputValue != "") {     //NEED TO ADD MORE VERIFICATIONS
       let arrayIDX = parseInt(inputValue) - 1;
@@ -117,6 +116,8 @@ const ChatbotPopup = () => {
 
         const userMessage: ChatbotMessage = { text: selectedOption.subOptions[arrayIDX].question, sender: "user" };
         setMessages([...messages, userMessage]);
+
+        
         
         const botMessage: ChatbotMessage = { 
           text: selectedOption.subOptions[arrayIDX].response,
@@ -166,9 +167,9 @@ const ChatbotPopup = () => {
               WLW Chatbot
             </Text>
             <Text>Hello, I'm WLW's support. How can I help you?</Text>
-            <ScrollArea.Autosize key={"chatbotScrollArea"} viewportRef={scrollAreaRef} h={getMaxHeight()} mih={15} mah={75} scrollbarSize={4} style={{ flexGrow: 1, overflowY: 'auto' }} >
+            <ScrollArea.Autosize key={"chatbotScrollArea"} viewportRef={scrollAreaRef} mah={100} scrollbarSize={4} style={{ flexGrow: 1, overflowY: 'auto' }} >
               {messages.map((message, index) => (
-                <div style={{ display: 'flex', justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start' }}>
+                <div key={index} style={{ display: 'flex', justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start' }}>
                   <Text
                     key={index}
                     style={{
@@ -185,7 +186,7 @@ const ChatbotPopup = () => {
               ))}
             </ScrollArea.Autosize>
             { (convoState === "start" || !selectedOption) && (
-              <div>
+              <div >
                 {chatOptions.map((option) => (
                   <Text key={"option " + option.id} color='#666b57' variant="subtle" >{option.id}. {option.section}</Text>
                 ))}
@@ -200,7 +201,6 @@ const ChatbotPopup = () => {
                   </Text>
                 ))}
                 Reply with the number of the option you'd like to choose
-                <Button color='#666b57' variant="subtle" onClick={handleBack} >Back</Button>
               </div>
             )}
             {selectedSubOption && ( <Text>Enter 'back' to go back</Text> )}
