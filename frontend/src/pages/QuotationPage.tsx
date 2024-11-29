@@ -24,10 +24,10 @@ const QuotationPage: React.FC = () => {
         senderAddressSuggestions: [],
         recipientAddressSuggestions: [],
         distance: null,
-        weight: 0,
-        height: 0,
-        width: 0,
-        length: 0,
+        weight: 1,
+        height: 10,
+        width: 10,
+        length: 10,
         shippingPrices: {
             regular: 0,
             express: 0,
@@ -258,30 +258,30 @@ const QuotationPage: React.FC = () => {
                         <NumberInput
                             label="Package Weight (kg)"
                             required
-                            min={0}
+                            min={1}
                             value={qFormData.weight}
-                            onChange={(value) => handleInputChange('weight', value || 0)}
+                            onChange={(value) => handleInputChange('weight', value || 1)}
                         />
                         <NumberInput
                             label="Package Width (cm)"
                             required
-                            min={0}
+                            min={10}
                             value={qFormData.width}
-                            onChange={(value) => handleInputChange('width', value || 0)}
+                            onChange={(value) => handleInputChange('width', value || 10)}
                         />
                         <NumberInput
                             label="Package Length (cm)"
                             required
-                            min={0}
+                            min={10}
                             value={qFormData.length}
-                            onChange={(value) => handleInputChange('length', value || 0)}
+                            onChange={(value) => handleInputChange('length', value || 10)}
                         />
                         <NumberInput
                             label="Package Height (cm)"
                             required
-                            min={0}
+                            min={10}
                             value={qFormData.height}
-                            onChange={(value) => handleInputChange('height', value || 0)}
+                            onChange={(value) => handleInputChange('height', value || 10)}
                         />
                         <Group justify="right" mt="md">
                             <Button onClick={calculateDistance}>check Quote</Button>
