@@ -9,8 +9,8 @@ const chatOptions: ChatbotOption[] = [
     id: "1",
     section: "Order Placement, cost, and Confirmation",
     subOptions: [
-      { id: "1", question: "How much will it cost to ship my order?", response: "To determine the exact cost of shipping your packages, click on 'Quotation' in the header, fill out the form and click on the 'Check Quote' button." },
-      { id: "2", question: "How do I place an order?", response: "In the header, click on 'Shipping', which will direct you to the form to place your order. Fill out the form, make sure your information are accurate. After placing your order, you'll need to make a payment. Once your order is successfully placed and payment is made, you will receive an email confirmation with all the details of your order, including tracking information." },
+      { id: "1", question: "How much does shipping cost?", response: "To determine the exact cost of shipping your packages, click on 'Quotation' in the header, fill out the form and click on the 'Check Quote' button." },
+      { id: "2", question: "How do I place an order?", response: "In the header, click on 'Shipping', fill out the form, make sure your information are accurate. After placing your order, you'll need to make a payment. Once your order is successfully placed and payment is made, you will receive an email confirmation with all the details of your order, including tracking information." },
       { id: "3", question: "Will I receive a confirmation after placing my order?", response: "Yes, once your order is successfully placed, you will receive an email confirmation with the details of your order and tracking information." },
       { id: "4", question: "Back", response: "" }
     ]
@@ -19,7 +19,7 @@ const chatOptions: ChatbotOption[] = [
     id: "2",
     section: "Package Restrictions",
     subOptions: [
-      { id: "1", question: "Are there any restrictions on what I can ship?", response: "Yes, the company does not ship hazardous materials, perishables, or live animals. Additionally, only one package is allowed per order." },
+      { id: "1", question: "Are there any shipping restrictions?", response: "Yes, the company does not ship hazardous materials, perishables, or live animals. Additionally, only one package is allowed per order." },
       { id: "2", question: "Back", response: "" }
     ]
   },
@@ -27,7 +27,7 @@ const chatOptions: ChatbotOption[] = [
     id: "3",
     section: "Order Modifications and Cancellations",
     subOptions: [
-      { id: "1", question: "Can I modify my order after it has been shipped?", response: "You can edit the delivery date and time whlile the order is pending. However, once an order has been dispatched, modifications are not allowed. Customers should ensure their orders are correct before shipping." },
+      { id: "1", question: "Can an order be modified?", response: "You can edit the delivery date and time whlile the order is pending. However, once an order has been dispatched, modifications are not allowed. Customers should ensure their orders are correct before shipping." },
       { id: "2", question: "Can I cancel my order?", response: "Orders can only be canceled when they are pending. Once they have been processed for shipping, they can no longer be deleted." },
       { id: "3", question: "Back", response: "" }
     ]
@@ -45,7 +45,7 @@ const chatOptions: ChatbotOption[] = [
     id: "5",
     section: "Shipping Methods and Delivery Times",
     subOptions: [
-      { id: "1", question: "What shipping options are available?", response: "You selected Option A" },
+      { id: "1", question: "What shipping options are available?", response: "The company offers three shipping methods:\n\t- Express Delivery: Fastest delivery(~2 days).\n\t- Regular Delivery: Most cost effective(~7 days).\n\t- Eco Delivery: Most environmentally friendly(~10 days)." },
       { id: "2", question: "How long does it take to process an order?", response: "Orders are typically processed within one business day, but this may vary based on order volume." },
       { id: "3", question: "Back", response: "" }
     ]
@@ -74,80 +74,90 @@ const ChatbotPopup = () => {
     text: "Sorry, this isn't a valid option. Please enter the number corresponding to the option you'd like to choose.", 
     sender: 'bot' 
   };
+  const botOptions = `${chatOptions.map((option) => `\t${option.id}. ${option.section}`).join('\n')}'`;
 
   const handleBack = () => {
     if (selectedSubOption) {
+      botMessage(`${selectedOption?.subOptions.map((subOpt) => `\t${subOpt.id}. ${subOpt.question}`).join('\n')}'`);
       setSelectedSubOption(null);
     } else {
+      botMessage(`Please select another option.\n${botOptions}`);
       setSelectedOption(null);
     }
-    setInput("");
   };
 
-  const handleSendMessage = async () => {
+  const userMessage = (message: string) => {
+    const userMessage: ChatbotMessage = { text: message, sender: "user" };
+    setMessages([...messages, userMessage]);
+  }
+
+  const botMessage = (message: string) => {
+    const botMessage: ChatbotMessage = { text: message, sender: "bot" };
+    setMessages(prev => [...prev, botMessage]);
+  }
+
+  const handleSendMessage = () => {
     if (input.trim() === "") return;
     
     if (input.trim().toLowerCase() === "back") {
+      userMessage("Back");
       handleBack();
+      setInput("");
       return;
     }
     setConvoState("started");
 
-    const userMessage: ChatbotMessage = { text: input, sender: "user" };
-    setMessages([...messages, userMessage]);
-    setInput("");
-
     const inputValue = input.replace(/\D/g, "");
-    if (inputValue != "") {     //NEED TO ADD MORE VERIFICATIONS
+    if (inputValue != "") {
       let arrayIDX = parseInt(inputValue) - 1;
 
       if (selectedOption && arrayIDX >= 0 && arrayIDX < selectedOption.subOptions.length && selectedOption.subOptions[arrayIDX].question.toLowerCase() === "back") {
+        userMessage("Back");
         handleBack();
-        return;
       }
       else if (!selectedOption && arrayIDX >= 0 && arrayIDX < chatOptions.length) {
         setSelectedOption(chatOptions[arrayIDX]);
         setSelectedSubOption(null);
 
-        const userMessage: ChatbotMessage = { text: chatOptions[arrayIDX].section, sender: "user" };
-        setMessages([...messages, userMessage]);
+        userMessage(chatOptions[arrayIDX].section);
+        botMessage(`Please go ahead and select another option. Thank you!\n${chatOptions[arrayIDX].subOptions.map((subOption) => `\t${subOption.id}. ${subOption.question}`).join('\n')}\nReply with the number of the option you'd like to choose.`);
       } else if (selectedOption && arrayIDX >= 0 && arrayIDX < selectedOption.subOptions.length) {
         setSelectedSubOption(selectedOption.subOptions[arrayIDX]);
 
-        const userMessage: ChatbotMessage = { text: selectedOption.subOptions[arrayIDX].question, sender: "user" };
-        setMessages([...messages, userMessage]);
-
-        
-        
-        const botMessage: ChatbotMessage = { 
-          text: selectedOption.subOptions[arrayIDX].response,
-          sender: 'bot' as const
-        };
-        setMessages(prev => [...prev, botMessage]);
+        userMessage(selectedOption.subOptions[arrayIDX].question);
+        botMessage(selectedOption.subOptions[arrayIDX].response);
       } else {
         setMessages((prevMessages) => [...prevMessages, errorMessage]);
       }
     } else {
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
     }
-  };
-
-  const getMaxHeight = () => {
-    if (selectedOption === null && selectedSubOption === null) {
-      return 100;
-    } else if (selectedOption !== null && selectedSubOption === null) {
-      return 200;
-    }
-    return 75;
+    setInput("");
   };
 
   // Make the scrollarea jump to most recent messages
   useEffect(() => {
     if (scrollAreaRef.current) {
-      // scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' }); //Jumps to bottom of most reacent message
-      scrollAreaRef.current.scrollTo({ top: 0, behavior: 'smooth' });  //Jumps to top of most reacent message
+      scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' }); //Jumps to bottom of most reacent message
+      // scrollAreaRef.current.scrollTo({ top: 0, behavior: 'smooth' });  //Jumps to top of most reacent message
     }
   }, [messages]);
+
+  useEffect(() => {
+    // Display initial message when component mounts
+    setMessages([{ text: "Welcome! How can I assist you today?", sender: "bot" }]);
+  }, []);
+
+  useEffect(() => {
+    const greetingMessage: ChatbotMessage = {
+      text: `Hello, I'm WLW's support. How can I help you?
+      ${botOptions}\nSimply reply with the number of the option you'd like to choose, and I'll be happy to assist you!`,
+      sender: "bot"
+    };
+    setMessages(prev => [...prev, greetingMessage]);
+    setMessages([greetingMessage]);
+  }, []);
+
 
   return (
     <div style={{ position: "fixed", bottom: 100, right: 50 }}>
@@ -156,53 +166,37 @@ const ChatbotPopup = () => {
           <Button onClick={() => setOpened((o) => !o)}>
             {opened ? ( "Close Chat" ) : (
               <>
-                <Image src="/WLW_logo.png" height={"30px"} radius={"150%"} style={{ marginRight: "8px" }} /> Ask WLW </>
+                <Image src="/WLW_logo.png" height={"30px"} radius={"150%"} style={{ marginRight: "8px" }} /> Ask WLW
+              </>
             )}
           </Button>
         </Popover.Target>
         <Popover.Dropdown>
           <Stack>
-            <Text size="lg" ta="center" className={classes.chatbotHeader} >
+            <Text size="lg" ta="center" className={classes.chatbotHeader} style={{ borderRadius: '10px' }} >
               <Image src="/WLW_logo.png" height={"30px"} style={{ marginRight: "8px" }} />
               WLW Chatbot
             </Text>
-            <Text>Hello, I'm WLW's support. How can I help you?</Text>
-            <ScrollArea.Autosize key={"chatbotScrollArea"} viewportRef={scrollAreaRef} mah={100} scrollbarSize={4} style={{ flexGrow: 1, overflowY: 'auto' }} >
+            <ScrollArea.Autosize key={"chatbotScrollArea"} viewportRef={scrollAreaRef} maw={400} mah={350} scrollbarSize={4} style={{ flexGrow: 1, overflowY: 'auto' }} >
               {messages.map((message, index) => (
                 <div key={index} style={{ display: 'flex', justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start' }}>
                   <Text
                     key={index}
                     style={{
-                    color: "#141511",
-                    marginBottom: '10px',
-                    padding: '0px 10px',
-                    borderRadius: '12px',
-                    maxWidth: '350px',
-                    backgroundColor: message.sender === 'user' ? "#ccd5ae" : 'rgba(0, 0, 0, 0.05)' }}
+                      whiteSpace: 'pre-wrap',
+                      color: "#141511",
+                      marginBottom: '10px',
+                      padding: '0px 10px',
+                      borderRadius: '12px',
+                      maxWidth: '350px',
+                      backgroundColor: message.sender === 'user' ? "#ccd5ae" : 'rgba(0, 0, 0, 0.05)'
+                    }}
                   >
                     {message.text}
                   </Text>
                 </div>
               ))}
             </ScrollArea.Autosize>
-            { (convoState === "start" || !selectedOption) && (
-              <div >
-                {chatOptions.map((option) => (
-                  <Text key={"option " + option.id} color='#666b57' variant="subtle" >{option.id}. {option.section}</Text>
-                ))}
-                Simply reply with the number of the option you'd like to choose, and I'll be happy to assist you!
-              </div>
-            )}
-            {selectedOption && !selectedSubOption && (
-              <div>
-                {selectedOption.subOptions.map((subOption) => (
-                  <Text key={"subOption " + subOption.id} color='#666b57' variant="subtle" >
-                    {subOption.id}. {subOption.question}
-                  </Text>
-                ))}
-                Reply with the number of the option you'd like to choose
-              </div>
-            )}
             {selectedSubOption && ( <Text>Enter 'back' to go back</Text> )}
             <TextInput
             autoFocus
