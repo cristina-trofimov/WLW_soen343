@@ -1,10 +1,10 @@
 export interface LocationState {
     state?: {
-      trackingNum?: String;
+      trackingNumber?: String;
       senderName?: String;
       senderAddress?: String;
       receiverName?: String;
       receiverAddress?: String;
-      total?: number;
+      amount?: number;
     };
 }

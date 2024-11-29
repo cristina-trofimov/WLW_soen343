@@ -27,11 +27,11 @@ const PaymentPage = () => {
     cardHolder: "",
     expirationDate: "",
     cvv: "",
-    amount: location.state?.total ?? 0, // Use state passed from OrderPage or default to 0
+    amount: location.state?.amount ?? 0, // Use state passed from OrderPage or default to 0
   });
 
   useEffect(() => {
-    const amountFromState = location.state?.total ?? 0; // Fallback to 0 if undefined
+    const amountFromState = location.state?.amount ?? 0; // Fallback to 0 if undefined
     setFormData((prev) => ({
       ...prev,
       amount: amountFromState,
@@ -166,7 +166,7 @@ const PaymentPage = () => {
 
       navigate("/order/review", {
         state: {
-          trackingNum: location.state?.trackingNum, senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
+          trackingNum: location.state?.trackingNumber, senderName: location.state?.senderName, senderAddress: location.state?.senderAddress,
           receiverName: location.state?.receiverName, receiverAddress: location.state?.receiverAddress, total: formData.amount
         }
       });
