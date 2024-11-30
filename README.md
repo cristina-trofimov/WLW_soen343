@@ -1,3 +1,6 @@
+## Demo
+[Video demo](https://github.com/cristina-trofimov/WLW_soen343/tree/master/demo) for the shipping process.
+
 ## Steps to follow for installation
 
 1. Please ensure that you have both _Python_ and _Node.js_ installed on your machine.
