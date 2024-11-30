@@ -1,4 +1,4 @@
-## Demo
+### Demo
 [Video demo](https://github.com/cristina-trofimov/WLW_soen343/tree/master/demo) for the shipping process.
 
 ## Steps to follow for installation
